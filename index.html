@@ -9,27 +9,23 @@
   <link rel="apple-touch-icon" href="./icons/icon-512.png?v=4">
   <title>Les Âges Rouges</title>
   <style>
-    html,body{height:100%;margin:0;background:#09090f;color:#f3bd69;font-family:system-ui,sans-serif}
-    main{min-height:100%;display:grid;place-items:center;text-align:center;padding:24px;box-sizing:border-box}
-    a{color:#f3bd69}
+    html,body{min-height:100%;margin:0;background:#09090f;color:#f3bd69;font-family:system-ui,sans-serif}
+    main{min-height:100vh;display:grid;place-items:center;text-align:center;padding:24px;box-sizing:border-box}
+    a{display:inline-block;margin-top:18px;padding:14px 22px;border:1px solid #b98a45;border-radius:12px;background:#641321;color:#fff;text-decoration:none;font-weight:700}
   </style>
 </head>
 <body>
   <main>
     <div>
       <h1>Les Âges Rouges</h1>
-      <p>Chargement du jeu…</p>
-      <p><a href="./Les-Ages-Rouges-Version-Confluences.html">Ouvrir le jeu</a></p>
+      <p>Ton jeu est prêt.</p>
+      <a href="./Les-Ages-Rouges-Version-Confluences.html">LANCER LE JEU</a>
     </div>
   </main>
   <script>
-    async function launch() {
-      if ("serviceWorker" in navigator) {
-        try { await navigator.serviceWorker.register("./service-worker.js"); } catch (e) {}
-      }
-      location.replace("./Les-Ages-Rouges-Version-Confluences.html");
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => navigator.serviceWorker.register("./service-worker.js").catch(() => {}));
     }
-    window.addEventListener("load", launch);
   </script>
 </body>
 </html>
