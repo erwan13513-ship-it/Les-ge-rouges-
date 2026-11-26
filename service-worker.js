@@ -1,4 +1,4 @@
-const CACHE = "les-ages-rouges-v4";
+const CACHE = "les-ages-rouges-v5";
 const SHELL = ["./","./index.html","./manifest.webmanifest","./icons/icon-192.png?v=4","./icons/icon-512.png?v=4"];
 self.addEventListener("install", event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(SHELL)));
