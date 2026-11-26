@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#6d1717">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icons/icon.svg" type="image/svg+xml">
+  <title>Les Âges Rouges</title>
+  <style>
+    html,body{height:100%;margin:0;background:#170b0b;color:#f3bd69;font-family:system-ui,sans-serif}
+    main{min-height:100%;display:grid;place-items:center;text-align:center;padding:24px;box-sizing:border-box}
+    a{color:#f3bd69}
+  </style>
+</head>
+<body>
+  <main>
+    <div>
+      <h1>Les Âges Rouges</h1>
+      <p>Chargement du jeu…</p>
+      <p><a href="./Les-Ages-Rouges-Version-Confluences.html">Ouvrir le jeu</a></p>
+    </div>
+  </main>
+  <script>
+    location.replace("./Les-Ages-Rouges-Version-Confluences.html");
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => navigator.serviceWorker.register("./service-worker.js"));
+    }
+  </script>
+</body>
+</html>
