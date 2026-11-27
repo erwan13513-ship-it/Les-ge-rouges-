@@ -1,21 +1,69 @@
-const CACHE = "les-ages-rouges-v5";
-const SHELL = ["./","./index.html","./manifest.webmanifest","./icons/icon-192.png?v=4","./icons/icon-512.png?v=4"];
+const CACHE = "les-ages-rouges-v6";
+const GAME = "./Les-Ages-Rouges-Version-Confluences.html";
+const SHELL = [
+  "./",
+  "./index.html",
+  GAME,
+  "./manifest.webmanifest",
+  "./icons/icon-192.png?v=4",
+  "./icons/icon-512.png?v=4"
+];
+
 self.addEventListener("install", event => {
-  event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(SHELL)));
-  self.skipWaiting();
+  event.waitUntil(
+    caches.open(CACHE)
+      .then(cache => cache.addAll(SHELL))
+      .then(() => self.skipWaiting())
+  );
 });
+
 self.addEventListener("activate", event => {
-  event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => key !== CACHE).map(key => caches.delete(key)))).then(() => self.clients.claim()));
+  event.waitUntil(
+    caches.keys()
+      .then(keys => Promise.all(
+        keys.filter(key => key !== CACHE).map(key => caches.delete(key))
+      ))
+      .then(() => self.clients.claim())
+  );
 });
+
 self.addEventListener("fetch", event => {
-  if (event.request.method !== "GET") return;
-  if (event.request.mode === "navigate") {
-    event.respondWith(fetch(event.request).then(response => {
-      const copy = response.clone();
-      caches.open(CACHE).then(cache => cache.put("./index.html", copy));
-      return response;
-    }).catch(() => caches.match("./index.html")));
+  const request = event.request;
+  if (request.method !== "GET") return;
+
+  // Navigation: serve the exact requested page from cache, then refresh it.
+  if (request.mode === "navigate") {
+    event.respondWith((async () => {
+      const cached = await caches.match(request);
+      const network = fetch(request).then(response => {
+        if (response && response.ok) {
+          const copy = response.clone();
+          caches.open(CACHE).then(cache => cache.put(request, copy));
+        }
+        return response;
+      }).catch(() => null);
+
+      if (cached) {
+        event.waitUntil(network.then(() => undefined));
+        return cached;
+      }
+
+      const response = await network;
+      return response || await caches.match("./index.html");
+    })());
     return;
   }
-  event.respondWith(caches.match(event.request).then(cached => cached || fetch(event.request)));
+
+  // Static resources: cache first to avoid repeated downloads.
+  event.respondWith((async () => {
+    const cached = await caches.match(request);
+    if (cached) return cached;
+
+    const response = await fetch(request);
+    if (response && response.ok) {
+      const copy = response.clone();
+      caches.open(CACHE).then(cache => cache.put(request, copy));
+    }
+    return response;
+  })());
 });
