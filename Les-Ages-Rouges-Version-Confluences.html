@@ -899,7 +899,7 @@ const trk=(x1,y1,x2,y2,w,lit)=>{const a=`x1='${x1}' y1='${y1}' x2='${x2}' y2='${
 ln=`<defs><filter id='gl' filterUnits='userSpaceOnUse' x='0' y='0' width='900' height='600'><feGaussianBlur stdDeviation='4'/></filter></defs>`;
 if(cls==='sor'){[72,132,192,252].forEach(r=>ln+=`<circle cx='550' cy='450' r='${r}' fill='none' stroke='#c2d5df' stroke-opacity='.10' stroke-width='1.5' stroke-dasharray='3 12'/>`)}else{CL.forEach((c,k)=>{ln+=`<circle cx='${c[0]}' cy='${c[1]}' r='145' fill='none' stroke='#2a2726' stroke-width='1.5'/>`;if(k>0)ln+=trk(CL[k-1][0],CL[k-1][1],c[0],c[1],16,cr[k]||cr[k-1])})}
 let dec=cls==='sor'?'':[[405,400],[775,400],[1145,400],[1515,400],[1885,400],[2255,400]].map(([x,y])=>`<span class='rd' style='left:${x}px;top:${y}px'></span>`).join('');
-const activeNodes=cls==='sor'?N:N.filter(n=>n[4]===tabC);const branchOf=d=>d.id==='sb2'||d.id==='sc2'||d.id==='srm1'||d.id==='sre1'?0:d.id==='sb1'||d.id==='sc1'||d.id==='srm2'||d.id==='sre2'?1:d.id==='sb3'||d.id==='sc3'||d.id==='srm3'||d.id==='sre3'?2:3;const orderedNodes=cls==='sor'?[...activeNodes].sort((a,b)=>branchOf(a[0])-branchOf(b[0])||a[1]-b[1]):activeNodes;let nodeIndex=0;orderedNodes.forEach(([d,rq,,,k,mx])=>{let nx,ny,dx,dy,ox,oy,bid=0;if(cls==='sor'){bid=d.id==='sb2'||d.id==='sc2'||d.id==='srm1'||d.id==='sre1'?0:d.id==='sb1'||d.id==='sc1'||d.id==='srm2'||d.id==='sre2'?1:d.id==='sb3'||d.id==='sc3'||d.id==='srm3'||d.id==='sre3'?2:3;const groups=[[...N.filter(n=>['sb2','sc2','srm1','sre1'].includes(n[0].id))],[...N.filter(n=>['sb1','sc1','srm2','sre2'].includes(n[0].id))],[...N.filter(n=>['sb3','sc3','srm3','sre3'].includes(n[0].id))],[...N.filter(n=>n[0].id.startsWith('src'))]];const idx=groups[bid].sort((a,b)=>a[1]-b[1]).findIndex(n=>n[0].id===d.id);const baseAng=[-2.35,-.78,2.35,.78][bid],turn=[.58,-.58,-.58,.58][bid],ang=baseAng+turn*idx*.58,rad=55+idx*88;nx=800+Math.cos(ang)*rad*1.25;ny=285+Math.sin(ang)*rad*.55;dx=Math.cos(ang);dy=Math.sin(ang);ox=-dy;oy=dx}else{const c=CL[k],idx=nodeIndex++,dr=c[2][idx];if(!dr)return;[dx,dy]=dr;nx=c[0]+dx*110;ny=c[1]+dy*110;ox=-dy;oy=dx}const r=rk(d.id),maxRank=mx||15,lk=p.lvl<rq||!sorGate(k);
+const activeNodes=cls==='sor'?N:N.filter(n=>n[4]===tabC);const branchOf=d=>d.id==='sb2'||d.id==='sc2'||d.id==='srm1'||d.id==='sre1'?0:d.id==='sb1'||d.id==='sc1'||d.id==='srm2'||d.id==='sre2'?1:d.id==='sb3'||d.id==='sc3'||d.id==='srm3'||d.id==='sre3'?2:3;const orderedNodes=cls==='sor'?[...activeNodes].sort((a,b)=>branchOf(a[0])-branchOf(b[0])||a[1]-b[1]):activeNodes;let nodeIndex=0;orderedNodes.forEach(([d,rq,,,k,mx])=>{let nx,ny,dx,dy,ox,oy,bid=0;if(cls==='sor'){bid=d.id==='sb2'||d.id==='sc2'||d.id==='srm1'||d.id==='sre1'?0:d.id==='sb1'||d.id==='sc1'||d.id==='srm2'||d.id==='sre2'?1:d.id==='sb3'||d.id==='sc3'||d.id==='srm3'||d.id==='sre3'?2:3;const groups=[[...N.filter(n=>['sb2','sc2','srm1','sre1'].includes(n[0].id))],[...N.filter(n=>['sb1','sc1','srm2','sre2'].includes(n[0].id))],[...N.filter(n=>['sb3','sc3','srm3','sre3'].includes(n[0].id))],[...N.filter(n=>n[0].id.startsWith('src'))]];const idx=groups[bid].sort((a,b)=>a[1]-b[1]).findIndex(n=>n[0].id===d.id);const baseAng=[-2.85,-1.10,2.00,.25][bid],turn=.27,ang=baseAng+turn*idx,rad=100+idx*78;nx=800+Math.cos(ang)*rad*1.15;ny=285+Math.sin(ang)*rad*.80;dx=Math.cos(ang);dy=Math.sin(ang);ox=-dy;oy=dx}else{const c=CL[k],idx=nodeIndex++,dr=c[2][idx];if(!dr)return;[dx,dy]=dr;nx=c[0]+dx*110;ny=c[1]+dy*110;ox=-dy;oy=dx}const r=rk(d.id),maxRank=mx||15,lk=p.lvl<rq||!sorGate(k);
 if(cls==='sor'){const cc=['#f07827','#65cfff','#b98cff','#e9c77f'][bid],prev=branchPrev[bid]||[800,285],cx=(prev[0]+nx)/2+ox*46,cy=(prev[1]+ny)/2+oy*46,dpath=`M${prev[0]} ${prev[1]} Q${cx} ${cy} ${nx} ${ny}`,attr=`d='${dpath}' fill='none' stroke-linecap='round' stroke-linejoin='round'`;ln+=`<path ${attr} stroke='#0b1018' stroke-width='13'/><path ${attr} stroke='${cc}' stroke-width='7' opacity='.28'/><path ${attr} stroke='${cc}' stroke-width='2.8' opacity='.95' stroke-dasharray='2 7'/>`;if(r>0)ln+=`<path ${attr} stroke='${cc}' stroke-width='5' opacity='.95'/>`;branchPrev[bid]=[nx,ny]}else ln+=trk(CL[k][0],CL[k][1],nx,ny,12,r>0);
 ln+=trk(nx+dx*34,ny+dy*34,nx+dx*112,ny+dy*112,6,r>=5);
 const P=PASS[d.id]||[];
@@ -908,7 +908,7 @@ const on=(k===0&&act===d.id)||(k===1&&actC===d.id)||(k===3&&actJ===d.id);
 nd+=`<div class='n3 ${lk?'lk':r>0?'rk':'av'}${on?' on':''}${selId===d.id?' sel':''}' data-i='${d.id}' style='left:${nx}px;top:${ny}px'><span class='fr'>${ico(d.id)}</span><b class='rl'>${lk?'Niv. '+rq:r+'/'+maxRank}</b></div>`});
 const hub=(x,y,l,c)=>`<svg class='hb${l?' lit':''}' style='left:${x}px;top:${y}px' viewBox='0 0 80 80'><path d='M40 0L45 9 35 9ZM80 40L71 45 71 35ZM40 80L35 71 45 71ZM0 40L9 35 9 45Z' fill='#7a1a14'/><polygon points='40,4 76,40 40,76 4,40' fill='#17100f' stroke='#c42d20' stroke-width='4'/><polygon points='40,14 66,40 40,66 14,40' fill='#2a1412' stroke='#e9dcc4' stroke-width='1.5'/>${c}</svg>`;
 const HI=[`<path d='M40 26L43 36 54 40 43 44 40 54 37 44 26 40 37 36Z' fill='#e9dcc4'/><path d='M28 50Q34 46 40 50T52 50' fill='none' stroke='#e9dcc4' stroke-width='1.6'/>`,`<circle cx='40' cy='40' r='11' fill='none' stroke='#e9dcc4' stroke-width='2'/><circle cx='40' cy='40' r='4' fill='#c42d20'/>`,`<path d='M40 26L53 32 53 44 40 56 27 44 27 32Z' fill='none' stroke='#e9dcc4' stroke-width='2'/>`,`<path d='M40 26Q52 40 40 54Q28 40 40 26Z' fill='#e9dcc4'/><circle cx='40' cy='40' r='3.5' fill='#c42d20'/>`];
-nd=(cls==='sor'?hub(800,285,true,`<path d='M40 17L45 35L63 40L45 45L40 63L35 45L17 40L35 35Z' fill='#f4d18c'/><circle cx='40' cy='40' r='29' fill='none' stroke='#f4d18c' stroke-width='1.5'/>`)+[-135,-45,135,45].map((a,i)=>{const x=450+Math.cos(a*Math.PI/180)*310,y=300+Math.sin(a*Math.PI/180)*210;return hub(x,y,true,[`<path d='M40 13C48 27 59 32 53 48C49 61 29 62 23 48C18 36 33 25 40 13Z' fill='#f07827'/>`,`<path d='M40 12L47 32L66 40L47 48L40 68L33 48L14 40L33 32Z' fill='#65cfff'/>`,`<path d='M47 10L25 40H40L33 67L58 32H43Z' fill='#b98cff'/>`,`<circle cx='40' cy='40' r='23' fill='none' stroke='#e9c77f' stroke-width='5'/><circle cx='40' cy='40' r='8' fill='#e9c77f'/>`][i])}).join(''):CL.map((c,k)=>hub(c[0],c[1],cr[k],HI[k])).join(''))+dec+nd;
+nd=(cls==='sor'?hub(800,285,true,`<path d='M40 17L45 35L63 40L45 45L40 63L35 45L17 40L35 35Z' fill='#f4d18c'/><circle cx='40' cy='40' r='29' fill='none' stroke='#f4d18c' stroke-width='1.5'/>`)+[-135,-45,135,45].map((a,i)=>{const x=800+Math.cos(a*Math.PI/180)*560,y=285+Math.sin(a*Math.PI/180)*215;return hub(x,y,true,[`<path d='M40 13C48 27 59 32 53 48C49 61 29 62 23 48C18 36 33 25 40 13Z' fill='#f07827'/>`,`<path d='M40 12L47 32L66 40L47 48L40 68L33 48L14 40L33 32Z' fill='#65cfff'/>`,`<path d='M47 10L25 40H40L33 67L58 32H43Z' fill='#b98cff'/>`,`<circle cx='40' cy='40' r='23' fill='none' stroke='#e9c77f' stroke-width='5'/><circle cx='40' cy='40' r='8' fill='#e9c77f'/>`][i])}).join(''):CL.map((c,k)=>hub(c[0],c[1],cr[k],HI[k])).join(''))+dec+nd;
 const sN=N.find(n=>n[0].id===selId);let info;
 if(sN){const[d,rq,,,k,mx]=sN,r=rk(d.id),maxRank=mx||15,gate=!sorGate(k)?(k===5?'2 rangs de Maîtrise élémentaire requis':'1 rang de Maîtrise élémentaire requis'):'';info=`<b>${d.n}</b><em>${K[k]}</em><p>${d.d}</p><p class='ct'>${k===1?'Coût : '+d.cost+' '+R2+' · ':''}Niveau requis : ${rq} · Rang ${r}/${maxRank}${gate?' · '+gate:''}</p>`}else info=`<p>Touche une compétence pour voir ses détails. Les compétences de base infligent des dégâts et sont toujours disponibles.</p>`;
 $('tr').innerHTML=`<div class='tb'>${(cls==='sor'?['🔥 Feu','❄️ Givre','⚡ Foudre','✧ Confluence']:['Basiques','Principales','Défensive','Conjuration']).map((n,i)=>cls==='sor'?`<span class='arch-chip archetype a${i}'>${n}</span>`:`<button class='tbb${i===tabC?' on':''}' data-t='${i}'>${n}</button>`).join('')}</div><div class='cap'>${cls==='sor'?'Quatre voies élémentaires entourent le noyau. Plus une compétence est éloignée du centre, plus le niveau requis est élevé.':CAP[tabC]}</div><div class='ts'><div class='vp'><div class='map' style='${cls==='sor'?'width:1600px;height:570px;':'width:2800px;height:800px;'}'><svg class='ln' width='${cls==='sor'?1600:2800}' height='${cls==='sor'?570:800}' viewBox='${cls==='sor'?'0 0 1600 570':'0 0 2800 800'}'>${ln}</svg>${nd}</div></div><div class='pts2'>Points dépensés &nbsp;<span style='color:#d9534f'>⊘ ${spent}</span><br>Points disponibles &nbsp;<span style='color:#f0c35a'>◆ ${pts}</span></div></div><div class='tip'>${info}</div>${sN?pHtml(sN[0].id,rk(sN[0].id))+vHtml(sN[0].id,rk(sN[0].id)):''}<div class='bt'><button id='ba' class='main'>Attribuer</button><button id='br'>Retirer</button><button id='be'>Équiper</button></div>`;vps();
@@ -2277,5 +2277,47 @@ body.portrait-required>:not(#orientation-lock){visibility:hidden!important}
 #sp .n3 .rl{font-size:12px!important;bottom:-20px!important}
 #sp .hb{width:76px!important;height:76px!important}
 #sp .ln{overflow:visible}
+</style>
+
+<style id="sorcerer-arcane-layout-v3">
+/* Synchroniser strictement les coordonnées SVG et les nœuds HTML */
+#sp .vp{position:absolute!important;inset:0!important;overflow:hidden!important}
+#sp .map{position:absolute!important;left:50%!important;top:50%!important;width:1600px!important;height:570px!important;margin:0!important;transform-origin:center center!important;overflow:visible!important}
+#sp .map svg.ln{position:absolute!important;left:0!important;top:0!important;width:1600px!important;height:570px!important;max-width:none!important;max-height:none!important;overflow:visible!important;pointer-events:none!important}
+#sp .n3{position:absolute!important;width:66px!important;height:66px!important;z-index:5!important}
+#sp .n3 .fr{padding:6px!important}
+#sp .n3 .rl{font-size:12px!important;bottom:-20px!important}
+#sp .hb{z-index:6!important;filter:drop-shadow(0 0 12px rgba(205,174,255,.55))!important}
+/* Ambiance arcanique violette, avec un halo distinct pour chaque voie */
+#sp .ts{
+ background:
+  radial-gradient(ellipse at 50% 50%,rgba(191,151,255,.20),transparent 30%),
+  radial-gradient(ellipse at 25% 35%,rgba(255,117,65,.14),transparent 28%),
+  radial-gradient(ellipse at 75% 35%,rgba(76,190,255,.14),transparent 28%),
+  radial-gradient(ellipse at 25% 75%,rgba(177,111,255,.17),transparent 28%),
+  radial-gradient(ellipse at 75% 75%,rgba(255,202,115,.13),transparent 28%),
+  linear-gradient(145deg,#28213f 0%,#1d1934 48%,#17172d 100%)!important;
+ border-color:rgba(193,166,235,.68)!important;
+ box-shadow:inset 0 0 55px rgba(7,5,20,.48),inset 0 1px 0 rgba(255,255,255,.14),0 5px 22px rgba(5,3,15,.8)!important
+}
+#sp .map{
+ background:
+  radial-gradient(circle at 50% 50%,rgba(236,210,255,.23),transparent 12%),
+  radial-gradient(circle at 50% 50%,rgba(125,82,196,.16),transparent 37%),
+  radial-gradient(ellipse at 20% 20%,rgba(246,113,67,.12),transparent 32%),
+  radial-gradient(ellipse at 80% 20%,rgba(70,174,255,.12),transparent 32%),
+  radial-gradient(ellipse at 20% 80%,rgba(171,105,255,.13),transparent 32%),
+  radial-gradient(ellipse at 80% 80%,rgba(244,194,106,.11),transparent 32%),
+  repeating-radial-gradient(circle at 50% 50%,transparent 0 72px,rgba(207,185,242,.055) 73px 74px),
+  linear-gradient(135deg,#211b38,#292044 50%,#1b1b35)!important
+}
+#sp .map:before{content:"";position:absolute;inset:18px;border:1px solid rgba(212,191,244,.18);border-radius:48%;box-shadow:inset 0 0 38px rgba(172,128,255,.08),0 0 30px rgba(147,104,224,.08);pointer-events:none}
+#sp .n3 .fr{background:radial-gradient(circle at 35% 25%,#53436f,#211a35 78%)!important;border:2px solid rgba(211,190,245,.75)!important;box-shadow:0 0 0 2px rgba(15,10,28,.8),0 3px 9px rgba(0,0,0,.7),inset 0 1px 4px rgba(255,255,255,.2)!important}
+#sp .n3.lk .fr{opacity:.82!important}
+#sp .n3.rk .fr{border-color:#ffcf9c!important;box-shadow:0 0 14px rgba(255,178,110,.48),0 3px 9px rgba(0,0,0,.7)!important}
+#sp .n3.av .fr{border-color:#d6c3ff!important;box-shadow:0 0 11px rgba(183,145,255,.42),0 3px 9px rgba(0,0,0,.7)!important}
+#sp .n3.on .fr,#sp .n3.sel .fr{border-color:#fff0c7!important;box-shadow:0 0 0 2px rgba(255,240,199,.25),0 0 20px rgba(220,185,255,.8)!important}
+#sp .n3 .rl{background:rgba(24,18,42,.96)!important;border-color:rgba(197,171,235,.6)!important;color:#f2eaff!important}
+#sp .pts2{background:rgba(31,24,51,.94)!important;border-color:rgba(192,163,235,.62)!important;color:#f2eaff!important;box-shadow:0 4px 16px rgba(0,0,0,.45)!important}
 </style>
 </body></html>
