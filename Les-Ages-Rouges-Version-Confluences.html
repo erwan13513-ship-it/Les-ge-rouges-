@@ -573,7 +573,7 @@ let ncls='sor';function pickCls(c){ncls=c;$('c1').className=c==='sor'?'on':'';$(
 $('c1').onclick=()=>pickCls('sor');$('c2').onclick=()=>pickCls('bar');pickCls('sor');
 let ngd='m';function pickG(g){ngd=g;$('g1').className=g==='m'?'on':'';$('g2').className=g==='f'?'on':'';$('c1').innerHTML='<svg class="ig" viewBox="0 0 24 24"><path d="M12 2L8 14M12 2l4 12M3 17q9 5 18 0M8 14q4 2 8 0"/></svg> '+(g==='f'?'Sorcière':'Sorcier')}
 $('g1').onclick=()=>pickG('m');$('g2').onclick=()=>pickG('f');pickG('m');
-$('kb').onclick=()=>{menuOpen=true;js.on=0;js.dx=js.dy=0;p.tx=p.x;p.ty=p.y;rsp();$('sp').hidden=false;vps()};$('sx').onclick=()=>{$('sp').hidden=true;menuOpen=false};
+$('kb').onclick=()=>{menuOpen=true;js.on=0;js.dx=js.dy=0;p.tx=p.x;p.ty=p.y;$('sp').hidden=false;$('tr').innerHTML='<div style="padding:28px;text-align:center;color:#e8c78b;font-size:18px">Chargement de l’arbre des compétences…</div>';requestAnimationFrame(()=>{rsp();vps()})};$('sx').onclick=()=>{$('sp').hidden=true;menuOpen=false};
 function aimIn(ev){const r=aimEl.getBoundingClientRect(),m=45;return ev.clientX>r.left-m&&ev.clientX<r.right+m&&ev.clientY>r.top-m&&ev.clientY<r.bottom+m}
 let aimV=null,aimC={x:0,y:0},aimPid=null,axC={x:0,y:0};
 function axHit(ev){return Math.hypot(ev.clientX-axC.x,ev.clientY-axC.y)<50}
@@ -872,7 +872,7 @@ const trk=(x1,y1,x2,y2,w,lit)=>{const a=`x1='${x1}' y1='${y1}' x2='${x2}' y2='${
 ln=`<defs><filter id='gl' filterUnits='userSpaceOnUse' x='0' y='0' width='2800' height='800'><feGaussianBlur stdDeviation='4'/></filter></defs>`;
 CL.forEach((c,k)=>{ln+=`<circle cx='${c[0]}' cy='${c[1]}' r='145' fill='none' stroke='#2a2726' stroke-width='1.5'/>`;if(k>0)ln+=trk(CL[k-1][0],CL[k-1][1],c[0],c[1],16,cr[k]||cr[k-1])});
 let dec=[[405,400],[775,400],[1145,400],[1515,400],[1885,400],[2255,400]].map(([x,y])=>`<span class='rd' style='left:${x}px;top:${y}px'></span>`).join('');
-N.forEach(([d,rq,,,k,mx])=>{const c=CL[k],idx=N.filter(n=>n[4]===k).findIndex(n=>n[0].id===d.id),dr=c[2][idx];if(!dr)return;const[dx,dy]=dr,nx=c[0]+dx*110,ny=c[1]+dy*110,r=rk(d.id),maxRank=mx||15,lk=p.lvl<rq||!sorGate(k),ox=-dy,oy=dx;
+const activeNodes=N.filter(n=>n[4]===tabC);activeNodes.forEach(([d,rq,,,k,mx])=>{const c=CL[k],idx=activeNodes.findIndex(n=>n[0].id===d.id),dr=c[2][idx];if(!dr)return;const[dx,dy]=dr,nx=c[0]+dx*110,ny=c[1]+dy*110,r=rk(d.id),maxRank=mx||15,lk=p.lvl<rq||!sorGate(k),ox=-dy,oy=dx;
 ln+=trk(c[0],c[1],nx,ny,12,r>0);
 ln+=trk(nx+dx*34,ny+dy*34,nx+dx*112,ny+dy*112,6,r>=5);
 const P=PASS[d.id]||[];
