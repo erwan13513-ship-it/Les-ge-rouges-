@@ -599,7 +599,7 @@ let ncls='sor';function pickCls(c){ncls=c;$('c1').className=c==='sor'?'on':'';$(
 $('c1').onclick=()=>pickCls('sor');$('c2').onclick=()=>pickCls('bar');pickCls('sor');
 let ngd='m';function pickG(g){ngd=g;$('g1').className=g==='m'?'on':'';$('g2').className=g==='f'?'on':'';$('c1').innerHTML='<svg class="ig" viewBox="0 0 24 24"><path d="M12 2L8 14M12 2l4 12M3 17q9 5 18 0M8 14q4 2 8 0"/></svg> '+(g==='f'?'Sorcière':'Sorcier')}
 $('g1').onclick=()=>pickG('m');$('g2').onclick=()=>pickG('f');pickG('m');
-$('kb').onclick=()=>{menuOpen=true;js.on=0;js.dx=js.dy=0;p.tx=p.x;p.ty=p.y;$('sp').hidden=false;if(!skillTreeWarm)rsp();vps()};$('sx').onclick=()=>{$('sp').hidden=true;menuOpen=false};
+$('kb').onclick=()=>{const nearby=mons.some(m=>m.hp>0&&Math.hypot(m.x-p.x,m.y-p.y)<430);if(nearby){log('Impossible d’ouvrir les compétences pendant un combat ! Éloigne-toi des ennemis.',1);return}menuOpen=true;js.on=0;js.dx=js.dy=0;p.tx=p.x;p.ty=p.y;$('sp').hidden=false;if(!skillTreeWarm)rsp();requestAnimationFrame(vps)};$('sx').onclick=()=>{$('sp').hidden=true;menuOpen=false};
 function aimIn(ev){const r=aimEl.getBoundingClientRect(),m=45;return ev.clientX>r.left-m&&ev.clientX<r.right+m&&ev.clientY>r.top-m&&ev.clientY<r.bottom+m}
 let aimV=null,aimC={x:0,y:0},aimPid=null,axC={x:0,y:0};
 function axHit(ev){return Math.hypot(ev.clientX-axC.x,ev.clientY-axC.y)<50}
@@ -883,7 +883,7 @@ function shp(d){const r=d.rad;return d.sh==='rect'?{len:r*1.8,w:r*.75}:d.sh==='c
 function inShape(d,a,m){const S=shp(d),dx=m.x-p.x,dy=m.y-p.y,c=Math.cos(a),n=Math.sin(a),u=dx*c+dy*n,v=-dx*n+dy*c;if(d.sh==='rect')return u>-10&&u<S.len&&Math.abs(v)<S.w/2+10;const l=Math.hypot(dx,dy);if(l>S.len)return false;if(l<20)return true;let da=Math.atan2(dy,dx)-a;da=Math.atan2(Math.sin(da),Math.cos(da));return Math.abs(da)<S.ha}
 function pd(d){const o=Object.assign({},d);o.mult=(d.mult||1)*(1+pv(d.id,'dmg'));o.rad=d.rad*(1+pv(d.id,'area'));o.cost=Math.round(d.cost*(1-pv(d.id,'cost')));o.sd=1+pv(d.id,'dur');o.ch=1+pv(d.id,'chill');return o}
 function pHtml(id,r){const P=PASS[id];if(!P)return'';const c=SKP[id]||0;return "<div class='pbs'><div class='ph'>Passif"+(r<5?' (rang 5 requis)':' : un seul à la fois')+"</div>"+P.map((q,i)=>"<button class='pb"+(c===i+1?" on":"")+"' data-p='"+(i+1)+"'"+(r<5?" disabled":"")+"><b>"+q.n+"</b>"+q.d+"</button>").join('')+"</div>"}
-let selId=null,tabC=0;let VPS={l:0,t:null,go:1};function vps(){const v=$('tr').querySelector('.vp');if(!v||!v.clientWidth)return;if(VPS.go||VPS.t==null){const h=cls==='sor'?[550,450]:([[220,400],[590,400],[960,400],[1330,400],[1700,400],[2070,400],[2440,400]][tabC]||[220,400]);VPS.l=Math.max(0,h[0]-v.clientWidth/2);VPS.t=Math.max(0,h[1]-v.clientHeight/2);VPS.go=0}v.scrollLeft=VPS.l;v.scrollTop=VPS.t;v.onscroll=()=>{VPS.l=v.scrollLeft;VPS.t=v.scrollTop}}
+let selId=null,tabC=0;let VPS={l:0,t:null,go:1};function vps(){const v=$('tr').querySelector('.vp');if(!v||!v.clientWidth)return;if(cls==='sor'){const m=v.querySelector('.map');if(m){const z=Math.min((v.clientWidth-24)/1100,(v.clientHeight-24)/900,1);m.style.transform='translate(-50%,-50%) scale('+z+')';m.style.left='50%';m.style.top='50%';m.style.transformOrigin='center center'}v.scrollLeft=0;v.scrollTop=0;return}if(VPS.go||VPS.t==null){const h=[[220,400],[590,400],[960,400],[1330,400],[1700,400],[2070,400],[2440,400]][tabC]||[220,400];VPS.l=Math.max(0,h[0]-v.clientWidth/2);VPS.t=Math.max(0,h[1]-v.clientHeight/2);VPS.go=0}v.scrollLeft=VPS.l;v.scrollTop=VPS.t;v.onscroll=()=>{VPS.l=v.scrollLeft;VPS.t=v.scrollTop}}
 function rsp(){const T=[[1,1],[3,4],[6,8]],B=SK[cls].b,C=SK[cls].c,DD=SK[cls].d[0],R2=cls==='bar'?'colère':'mana';
 const HY=225,MAIN_REQ=[1,4,8,12,16,20],NA=[...B.map((d,i)=>[d,T[i][0],50,110,0,15]),...C.map((d,i)=>[d,MAIN_REQ[i]??20,50,110,1,15]),...SK[cls].d.map((d,i)=>[d,[3,6][i],SK[cls].d.length>1?[28,72][i]:50,110,2,15]),...(SK[cls].j||[]).map((d,i)=>[d,[4,7][i],[28,72][i],110,3,15])];
 if(cls==='sor')SOR_TALENTS.forEach(d=>NA.push([d,d.req,50,110,d.cat,d.maxRank]));
@@ -899,7 +899,7 @@ ln=`<defs><filter id='gl' filterUnits='userSpaceOnUse' x='0' y='0' width='2800' 
 if(cls==='sor'){const dirs=[-135,-45,135,45].map(a=>a*Math.PI/180);dirs.forEach((a,i)=>{const ex=550+Math.cos(a)*420,ey=450+Math.sin(a)*420;ln+=`<circle cx='550' cy='450' r='${140+i*0}' fill='none' stroke='#554638' stroke-opacity='.28' stroke-width='1.5'/>`;ln+=trk(550+Math.cos(a)*48,450+Math.sin(a)*48,ex,ey,13,false)});[135,220,305,390].forEach(r=>ln+=`<circle cx='550' cy='450' r='${r}' fill='none' stroke='#b59a72' stroke-opacity='.12' stroke-width='1.5' stroke-dasharray='3 12'/>`)}else{CL.forEach((c,k)=>{ln+=`<circle cx='${c[0]}' cy='${c[1]}' r='145' fill='none' stroke='#2a2726' stroke-width='1.5'/>`;if(k>0)ln+=trk(CL[k-1][0],CL[k-1][1],c[0],c[1],16,cr[k]||cr[k-1])})}
 let dec=cls==='sor'?'':[[405,400],[775,400],[1145,400],[1515,400],[1885,400],[2255,400]].map(([x,y])=>`<span class='rd' style='left:${x}px;top:${y}px'></span>`).join('');
 const activeNodes=cls==='sor'?N:N.filter(n=>n[4]===tabC);let nodeIndex=0;activeNodes.forEach(([d,rq,,,k,mx])=>{let nx,ny,dx,dy,ox,oy;if(cls==='sor'){const bid=d.id==='sb2'||d.id==='sc2'||d.id==='srm1'||d.id==='sre1'?0:d.id==='sb1'||d.id==='sc1'||d.id==='srm2'||d.id==='sre2'?1:d.id==='sb3'||d.id==='sc3'||d.id==='srm3'||d.id==='sre3'?2:3;const groups=[[...N.filter(n=>['sb2','sc2','srm1','sre1'].includes(n[0].id))],[...N.filter(n=>['sb1','sc1','srm2','sre2'].includes(n[0].id))],[...N.filter(n=>['sb3','sc3','srm3','sre3'].includes(n[0].id))],[...N.filter(n=>n[0].id.startsWith('src'))]];const idx=groups[bid].sort((a,b)=>a[1]-b[1]).findIndex(n=>n[0].id===d.id);const ang=[-135,-45,135,45][bid]*Math.PI/180;const rad=135+idx*85;nx=550+Math.cos(ang)*rad;ny=450+Math.sin(ang)*rad;dx=Math.cos(ang);dy=Math.sin(ang);ox=-dy;oy=dx}else{const c=CL[k],idx=nodeIndex++,dr=c[2][idx];if(!dr)return;[dx,dy]=dr;nx=c[0]+dx*110;ny=c[1]+dy*110;ox=-dy;oy=dx}const r=rk(d.id),maxRank=mx||15,lk=p.lvl<rq||!sorGate(k);
-ln+=trk(c[0],c[1],nx,ny,12,r>0);
+if(cls==='sor'){const cc=['#f07827','#65cfff','#b98cff','#e9c77f'][bid],a=`x1='550' y1='450' x2='${nx}' y2='${ny}' stroke-linecap='round'`;ln+=`<line ${a} stroke='#080706' stroke-width='19'/><line ${a} stroke='${cc}' stroke-width='8' opacity='.18'/><line ${a} stroke='${cc}' stroke-width='3' opacity='.85' stroke-dasharray='3 9'/>`;if(r>0)ln+=`<line ${a} stroke='${cc}' stroke-width='7' opacity='.85'/>`}else ln+=trk(CL[k][0],CL[k][1],nx,ny,12,r>0);
 ln+=trk(nx+dx*34,ny+dy*34,nx+dx*112,ny+dy*112,6,r>=5);
 const P=PASS[d.id]||[];
 P.forEach((q,j)=>{const al=j<2?62:102,sd=j%2?30:-30,bx=nx+dx*al,by=ny+dy*al,px=bx+ox*sd,py=by+oy*sd,pn=j+1,on=SKP[d.id]===pn;ln+=trk(bx,by,px,py,5,on);dec+=`<div class='dm ${on?'on':r>=5?'av':'lk'}' data-i='${d.id}' data-p='${pn}' style='left:${px}px;top:${py}px'><i></i></div>`});
@@ -2144,6 +2144,33 @@ body.portrait-required>:not(#orientation-lock){visibility:hidden!important}
 #sp .ts{background:radial-gradient(circle at 50% 50%,rgba(126,91,55,.23),transparent 28%),radial-gradient(ellipse at 50% 50%,#211a17,#100d0c 78%)!important}
 #sp .n3{width:70px!important;height:70px!important}
 @media(max-height:520px){#sp .ts{height:42vh!important;min-height:180px!important}}
+
+/* Plein écran et carte élémentaire lisible */
+#sp{position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;height:100dvh!important;z-index:10000!important;display:flex!important;align-items:stretch!important;justify-content:stretch!important;background:radial-gradient(ellipse at 50% 35%,rgba(54,35,27,.96),rgba(4,5,7,.99) 78%)!important}
+#sp[hidden]{display:none!important}
+#sp .card{width:100vw!important;height:100vh!important;height:100dvh!important;max-width:none!important;max-height:none!important;min-height:0!important;box-sizing:border-box!important;border:0!important;border-radius:0!important;padding:clamp(8px,1.3vw,18px) clamp(10px,2vw,28px)!important;display:flex!important;flex-direction:column!important;gap:8px!important;overflow:hidden!important;background:linear-gradient(145deg,#211a17 0%,#15110f 55%,#090a0d 100%)!important;box-shadow:inset 0 0 0 2px rgba(173,132,81,.55),inset 0 0 65px rgba(0,0,0,.8)!important}
+#sp .top{flex:0 0 auto!important;margin:0!important;padding:2px 4px 8px!important;border-bottom:1px solid rgba(211,174,119,.35)!important}
+#spt{font-size:clamp(20px,2.4vw,30px)!important;color:#f5dfb6!important;letter-spacing:1.5px!important;background:transparent!important;border:0!important;padding:3px 8px!important}
+#sp #sx{width:42px!important;height:42px!important;border:1px solid #97764e!important;border-radius:50%!important;background:linear-gradient(#3c2b21,#17100d)!important;color:#f7dfb4!important}
+#sp #tr{display:flex!important;flex:1 1 auto!important;min-height:0!important;flex-direction:column!important;gap:8px!important}
+#sp .tb{flex:0 0 auto!important;display:flex!important;justify-content:center!important;gap:clamp(5px,1vw,12px)!important;margin:0!important;padding:2px 0 5px!important;overflow:visible!important}
+#sp .arch-chip{flex:1 1 0!important;min-width:0!important;text-align:center!important;padding:clamp(7px,1.1vh,12px) 4px!important;border-radius:9px!important;font-size:clamp(13px,1.8vw,22px)!important;font-weight:700!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 3px 9px #000!important}
+#sp .cap{flex:0 0 auto!important;margin:0 4px!important;font-size:clamp(12px,1.45vw,17px)!important;color:#d9c7a8!important}
+#sp .ts{flex:1 1 auto!important;min-height:0!important;height:auto!important;width:100%!important;border-radius:16px!important;border:1px solid rgba(197,159,108,.55)!important;background:radial-gradient(circle at 50% 50%,rgba(100,75,53,.28),transparent 40%),linear-gradient(145deg,#1d1918,#0c0d10)!important;overflow:hidden!important;box-shadow:inset 0 0 50px #000,0 5px 18px #000!important}
+#sp .vp{position:absolute!important;inset:0!important;overflow:hidden!important;display:block!important}
+#sp .map{position:absolute!important;width:1100px!important;height:900px!important;left:50%;top:50%;margin:0!important;overflow:visible!important;background:transparent!important}
+#sp .map svg.ln{position:absolute!important;left:0!important;top:0!important;width:1100px!important;height:900px!important;overflow:visible!important}
+#sp .hb{width:70px!important;height:70px!important}
+#sp .n3{width:66px!important;height:66px!important}
+#sp .n3 .fr{border-radius:50%!important;border-width:2px!important;padding:5px!important}
+#sp .n3 .rl{font-size:12px!important;white-space:nowrap!important}
+#sp .pts2{left:12px!important;top:12px!important;padding:8px 12px!important;border-radius:9px!important;background:rgba(8,8,10,.88)!important;border:1px solid #8a704f!important;font-size:clamp(11px,1.2vw,14px)!important;line-height:1.6!important}
+#sp .tip{flex:0 0 auto!important;margin:0!important;padding:8px 13px!important;border-radius:9px!important;background:linear-gradient(100deg,#2c2119,#15110f)!important;border:1px solid #76583a!important;color:#e8d8bc!important}
+#sp .tip p{margin:3px 0!important;font-size:clamp(11px,1.2vw,14px)!important}
+#sp .bt{flex:0 0 auto!important;margin:0!important;gap:8px!important}
+#sp .bt button{min-height:38px!important;border-radius:8px!important}
+#sp .bt button.main:not(:disabled){background:linear-gradient(#b65332,#70251b)!important;border-color:#e0a66c!important}
+@media(max-height:520px){#sp .card{gap:5px!important;padding:5px 10px!important}#sp .top{padding-bottom:4px!important}#sp .tb{padding-bottom:2px!important}#sp .cap{font-size:11px!important}#sp .tip{padding:5px 10px!important}#sp .bt button{min-height:32px!important}}
 </style>
 <div id="orientation-lock" role="dialog" aria-modal="true" aria-label="Mode paysage obligatoire">
  <div class="ol-card"><span class="ol-icon">⟳</span><h2>Tourne ton téléphone</h2><p>Les Âges Rouges se joue uniquement en mode paysage.<br>Tourne ton appareil à l’horizontale pour continuer ton aventure.</p></div>
