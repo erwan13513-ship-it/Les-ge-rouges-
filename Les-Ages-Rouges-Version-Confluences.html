@@ -187,6 +187,15 @@ document.documentElement.style.setProperty('--wall','url('+c.toDataURL('image/jp
 #sp .map svg.ln{shape-rendering:optimizeSpeed}
 #sp .map *{filter:none!important;box-shadow:none!important;text-shadow:none!important}
 #sp .map{background-image:none!important}
+
+<style id="skill-tree-isolation-test">
+/* Diagnostic temporaire : arbre visuel neutralisé, logique du menu conservée */
+#sp .ts{position:relative!important;contain:strict!important}
+#sp .ts .vp{overflow:hidden!important}
+#sp .ts .map{width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;background:#171411!important}
+#sp .ts .map>*{display:none!important}
+#sp .ts:after{content:"TEST — affichage de l’arbre désactivé temporairement";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:20px;text-align:center;color:#e6dcc3;font:14px Georgia,serif}
+</style>
 </style>
 </head><body>
 <div id="gl"><style>
