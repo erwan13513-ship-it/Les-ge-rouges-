@@ -2064,4 +2064,27 @@ if(typeof SK!=='undefined'&&SK.sor){
 #tr .hb,#tr .hb.lit{filter:none!important}
 #tr .rd{box-shadow:none!important;filter:none!important}
 </style>
+
+<style id="landscape-only-mode">
+#orientation-lock{display:none;position:fixed;inset:0;z-index:99999;background:radial-gradient(ellipse at 50% 35%,#32130f,#080606 75%);color:#ead9bd;align-items:center;justify-content:center;text-align:center;padding:24px;box-sizing:border-box;font-family:Georgia,serif}
+#orientation-lock .ol-card{max-width:360px;border:2px solid #6b4936;background:rgba(12,8,7,.94);padding:28px 22px;box-shadow:0 10px 40px #000}
+#orientation-lock .ol-icon{font:64px/1 sans-serif;margin-bottom:20px;display:block}
+#orientation-lock h2{color:#d9a441;font-size:26px;margin:0 0 12px}
+#orientation-lock p{font-size:16px;line-height:1.5;margin:0;opacity:.9}
+body.portrait-required>#orientation-lock{display:flex}
+body.portrait-required>:not(#orientation-lock){visibility:hidden!important}
+</style>
+<div id="orientation-lock" role="dialog" aria-modal="true" aria-label="Mode paysage obligatoire">
+ <div class="ol-card"><span class="ol-icon">⟳</span><h2>Tourne ton téléphone</h2><p>Les Âges Rouges se joue uniquement en mode paysage.<br>Tourne ton appareil à l’horizontale pour continuer ton aventure.</p></div>
+</div>
+<script id="landscape-only-controller">
+(function(){
+ const mq=window.matchMedia('(orientation: portrait)');
+ function update(){document.body.classList.toggle('portrait-required',mq.matches);}
+ update();
+ if(mq.addEventListener)mq.addEventListener('change',update);else if(mq.addListener)mq.addListener(update);
+ window.addEventListener('orientationchange',update,{passive:true});
+})();
+</script>
+
 </body></html>
