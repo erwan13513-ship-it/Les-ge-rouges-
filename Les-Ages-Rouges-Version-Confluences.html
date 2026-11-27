@@ -2,6 +2,30 @@
 <html lang="fr"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Les Âges Rouges</title>
+<style id="early-boot-style">
+#earlyBoot{position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:radial-gradient(ellipse at 50% 38%,#3a0d0b 0%,#14080a 45%,#030203 100%);color:#e0c58e;font: bold 28px Georgia,serif;letter-spacing:3px;text-align:center}
+#earlyBoot .eb-sub{font:italic 15px Georgia,serif;letter-spacing:1px;color:#a98b60}
+#earlyBoot .eb-bar{width:min(68vw,280px);height:8px;border:1px solid #6b5130;background:#0a0505;overflow:hidden}
+#earlyBoot .eb-bar i{display:block;width:35%;height:100%;background:linear-gradient(#e0553f,#7a130d 55%,#c8923a);animation:ebmove 1.2s ease-in-out infinite alternate}
+@keyframes ebmove{from{transform:translateX(-5%)}to{transform:translateX(190%)}}
+</style>
+<script>
+(function(){
+ var e=document.createElement('div');
+ e.id='earlyBoot';
+ e.innerHTML='<div>LES ÂGES ROUGES</div><div class="eb-bar"><i></i></div><div class="eb-sub">Préparation du monde…</div>';
+ document.documentElement.appendChild(e);
+ var mo=new MutationObserver(function(){
+  if(document.getElementById('gl')){
+   e.style.transition='opacity .18s ease';
+   e.style.opacity='0';
+   setTimeout(function(){e.remove()},220);
+   mo.disconnect();
+  }
+ });
+ mo.observe(document.documentElement,{childList:true,subtree:true});
+})();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=IM+Fell+English&family=Pirata+One&display=swap" rel="stylesheet">
 <style>
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#0e0b0a;--fg:#d9cbb2;--card:#18110f;--bd:#4a3a30}
