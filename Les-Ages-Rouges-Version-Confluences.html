@@ -883,7 +883,7 @@ function shp(d){const r=d.rad;return d.sh==='rect'?{len:r*1.8,w:r*.75}:d.sh==='c
 function inShape(d,a,m){const S=shp(d),dx=m.x-p.x,dy=m.y-p.y,c=Math.cos(a),n=Math.sin(a),u=dx*c+dy*n,v=-dx*n+dy*c;if(d.sh==='rect')return u>-10&&u<S.len&&Math.abs(v)<S.w/2+10;const l=Math.hypot(dx,dy);if(l>S.len)return false;if(l<20)return true;let da=Math.atan2(dy,dx)-a;da=Math.atan2(Math.sin(da),Math.cos(da));return Math.abs(da)<S.ha}
 function pd(d){const o=Object.assign({},d);o.mult=(d.mult||1)*(1+pv(d.id,'dmg'));o.rad=d.rad*(1+pv(d.id,'area'));o.cost=Math.round(d.cost*(1-pv(d.id,'cost')));o.sd=1+pv(d.id,'dur');o.ch=1+pv(d.id,'chill');return o}
 function pHtml(id,r){const P=PASS[id];if(!P)return'';const c=SKP[id]||0;return "<div class='pbs'><div class='ph'>Passif"+(r<5?' (rang 5 requis)':' : un seul à la fois')+"</div>"+P.map((q,i)=>"<button class='pb"+(c===i+1?" on":"")+"' data-p='"+(i+1)+"'"+(r<5?" disabled":"")+"><b>"+q.n+"</b>"+q.d+"</button>").join('')+"</div>"}
-let selId=null,tabC=0;let VPS={l:0,t:null,go:1};function vps(){const v=$('tr').querySelector('.vp');if(!v||!v.clientWidth)return;if(cls==='sor'){const m=v.querySelector('.map');if(m){const z=Math.min((v.clientWidth-24)/1100,(v.clientHeight-24)/900,1);m.style.transform='translate(-50%,-50%) scale('+z+')';m.style.left='50%';m.style.top='50%';m.style.transformOrigin='center center'}v.scrollLeft=0;v.scrollTop=0;return}if(VPS.go||VPS.t==null){const h=[[220,400],[590,400],[960,400],[1330,400],[1700,400],[2070,400],[2440,400]][tabC]||[220,400];VPS.l=Math.max(0,h[0]-v.clientWidth/2);VPS.t=Math.max(0,h[1]-v.clientHeight/2);VPS.go=0}v.scrollLeft=VPS.l;v.scrollTop=VPS.t;v.onscroll=()=>{VPS.l=v.scrollLeft;VPS.t=v.scrollTop}}
+let selId=null,tabC=0;let VPS={l:0,t:null,go:1};function vps(){const v=$('tr').querySelector('.vp');if(!v||!v.clientWidth)return;if(cls==='sor'){const m=v.querySelector('.map');if(m){const z=Math.min((v.clientWidth-32)/850,(v.clientHeight-32)/700,1.08);m.style.transform='translate(-50%,-50%) scale('+z+')';m.style.left='50%';m.style.top='50%';m.style.transformOrigin='center center'}v.scrollLeft=0;v.scrollTop=0;return}if(VPS.go||VPS.t==null){const h=[[220,400],[590,400],[960,400],[1330,400],[1700,400],[2070,400],[2440,400]][tabC]||[220,400];VPS.l=Math.max(0,h[0]-v.clientWidth/2);VPS.t=Math.max(0,h[1]-v.clientHeight/2);VPS.go=0}v.scrollLeft=VPS.l;v.scrollTop=VPS.t;v.onscroll=()=>{VPS.l=v.scrollLeft;VPS.t=v.scrollTop}}
 function rsp(){const T=[[1,1],[3,4],[6,8]],B=SK[cls].b,C=SK[cls].c,DD=SK[cls].d[0],R2=cls==='bar'?'colère':'mana';
 const HY=225,MAIN_REQ=[1,4,8,12,16,20],NA=[...B.map((d,i)=>[d,T[i][0],50,110,0,15]),...C.map((d,i)=>[d,MAIN_REQ[i]??20,50,110,1,15]),...SK[cls].d.map((d,i)=>[d,[3,6][i],SK[cls].d.length>1?[28,72][i]:50,110,2,15]),...(SK[cls].j||[]).map((d,i)=>[d,[4,7][i],[28,72][i],110,3,15])];
 if(cls==='sor')SOR_TALENTS.forEach(d=>NA.push([d,d.req,50,110,d.cat,d.maxRank]));
@@ -2171,6 +2171,35 @@ body.portrait-required>:not(#orientation-lock){visibility:hidden!important}
 #sp .bt button{min-height:38px!important;border-radius:8px!important}
 #sp .bt button.main:not(:disabled){background:linear-gradient(#b65332,#70251b)!important;border-color:#e0a66c!important}
 @media(max-height:520px){#sp .card{gap:5px!important;padding:5px 10px!important}#sp .top{padding-bottom:4px!important}#sp .tb{padding-bottom:2px!important}#sp .cap{font-size:11px!important}#sp .tip{padding:5px 10px!important}#sp .bt button{min-height:32px!important}}
+
+/* Agrandir réellement l'arbre et donner la priorité à la zone interactive */
+#sp .card{gap:5px!important;padding:7px clamp(8px,1.5vw,20px)!important}
+#sp .top{height:44px!important;min-height:44px!important;flex:0 0 44px!important;padding:0 4px 5px!important;margin:0!important;align-items:center!important}
+#sp #spt{font-size:clamp(17px,2vw,24px)!important;padding:2px 8px!important}
+#sp #sx{width:36px!important;height:36px!important}
+#sp .tb{flex:0 0 auto!important;padding:1px 0 3px!important;gap:7px!important}
+#sp .arch-chip{padding:7px 3px!important;font-size:clamp(12px,1.6vw,19px)!important}
+#sp .cap{font-size:clamp(11px,1.2vw,14px)!important;line-height:1.2!important;min-height:18px!important}
+#sp .ts{flex:1 1 420px!important;flex-basis:420px!important;min-height:300px!important;height:auto!important;max-height:62vh!important;border-radius:14px!important}
+#sp .n3{width:88px!important;height:88px!important}
+#sp .n3 .fr{padding:8px!important}
+#sp .n3 .rl{bottom:-20px!important;font-size:clamp(12px,1.3vw,15px)!important;padding:3px 9px!important}
+#sp .hb{width:90px!important;height:90px!important}
+#sp .tip{padding:6px 11px!important;min-height:42px!important}
+#sp .tip p{font-size:clamp(11px,1.15vw,13px)!important;line-height:1.25!important}
+#sp .bt{gap:7px!important}
+#sp .bt button{min-height:44px!important;font-size:clamp(11px,1.2vw,14px)!important}
+@media(max-height:520px){
+ #sp .card{gap:3px!important;padding:4px 8px!important}
+ #sp .top{height:34px!important;min-height:34px!important;flex-basis:34px!important;padding-bottom:2px!important}
+ #sp #sx{width:30px!important;height:30px!important}
+ #sp .tb{padding:0 0 2px!important}
+ #sp .arch-chip{padding:5px 2px!important}
+ #sp .cap{font-size:10px!important;min-height:14px!important}
+ #sp .ts{flex:1 1 330px!important;flex-basis:330px!important;min-height:230px!important;max-height:65vh!important}
+ #sp .tip{min-height:32px!important;padding:4px 8px!important}
+ #sp .bt button{min-height:34px!important}
+}
 </style>
 <div id="orientation-lock" role="dialog" aria-modal="true" aria-label="Mode paysage obligatoire">
  <div class="ol-card"><span class="ol-icon">⟳</span><h2>Tourne ton téléphone</h2><p>Les Âges Rouges se joue uniquement en mode paysage.<br>Tourne ton appareil à l’horizontale pour continuer ton aventure.</p></div>
