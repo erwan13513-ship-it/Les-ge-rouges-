@@ -1739,8 +1739,9 @@ killM=function(m){if(!(CQ.h&&inC)||m.bos){_kQ(m);return}const x=m.x,y=m.y;_kQ(m)
  if(Math.random()<.22){const it=mkItem(Math.random()*5|0,Math.random()<.6?3:2,1);dropGnd(it,x,y);log('Un objet est tombé : '+it.n+'.',1)}
  if(Math.random()<.07){const it=mkAny();dropGnd(it,x,y);log('<i class="gi gi-star"></i> Objet légendaire tombé : '+it.n+' !',1)}};
 
-let last=performance.now();
-(function loop(t){const dt=Math.min(.05,(t-last)/1000);last=t;if(!invOpen&&!menuOpen){FXC.hsCd-=dt;if(FXC.hs>0)FXC.hs-=dt;else step(dt)}draw();requestAnimationFrame(loop)})(last);
+const MOBILE_FRAME_INTERVAL=(matchMedia('(pointer: coarse)').matches||((navigator.hardwareConcurrency||8)<=6))?1000/30:1000/60;
+let last=performance.now(),lastFrame=last;
+(function loop(t){requestAnimationFrame(loop);if(t-lastFrame<MOBILE_FRAME_INTERVAL)return;const dt=Math.min(.05,(t-last)/1000);last=t;lastFrame=t;if(!invOpen&&!menuOpen){FXC.hsCd-=dt;if(FXC.hs>0)FXC.hs-=dt;else step(dt);draw()}})(last);
 /* ===== Citadelle en 3D (Three.js) ===== */
 function C3Y(y){return C3.on?VH/2+(y-VH/2)/C3.K:y}
 function C3L(dy){return C3.on?VH/2+(dy-VH/2)*C3.K:dy}
