@@ -1956,6 +1956,9 @@ if(typeof SK!=='undefined'&&SK.sor){
 (function(){
   if(window.__arSorReworkV1) return;
   window.__arSorReworkV1=true;
+  /* Désactive l'ancien déclencheur fondé sur la simple présence des statuts. */
+  window.__arConfBusy=false;
+  triggerConfluence=function(){ /* remplacé par les jauges élémentaires */ };
   const GAUGE_MAX=100, GAUGE_DECAY_DELAY=6000, GAUGE_DECAY_RATE=12;
   const PAIR_DAMAGE=3, PRIMORDIAL_DAMAGE=6;
   const PAIR_RADIUS=142, PRIMORDIAL_RADIUS=225;
