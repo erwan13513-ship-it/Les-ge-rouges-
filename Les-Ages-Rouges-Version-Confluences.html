@@ -1949,4 +1949,106 @@ if(typeof SK!=='undefined'&&SK.sor){
 #tr .tip em+p{margin-top:6px;padding-top:6px;border-top:1px solid #4a3426;font-size:13px;color:#e0d2b4}
 #tr .tip .ct{margin-top:6px;padding-top:5px;border-top:1px dotted #5a3f2d;color:#d9a441;opacity:1;font-size:11.5px;letter-spacing:.3px}
 </style>
+
+<!-- AR_SORCERER_CONFLUENCE_REWORK_V1 -->
+<script>
+/* Refonte Sorcier : jauges élémentaires individuelles et Confluences automatiques. */
+(function(){
+  if(window.__arSorReworkV1) return;
+  window.__arSorReworkV1=true;
+  const GAUGE_MAX=100, GAUGE_DECAY_DELAY=6000, GAUGE_DECAY_RATE=12;
+  const PAIR_DAMAGE=3, PRIMORDIAL_DAMAGE=6;
+  const PAIR_RADIUS=142, PRIMORDIAL_RADIUS=225;
+  const oldChill=chillM;
+  chillM=function(m,a){
+    oldChill(m,a);
+    if(cls==='sor'&&m&&m.hp>0&&!window.__arConfResolving) addElement(m,'f',34);
+  };
+  const oldOnHit=onHit;
+  onHit=function(s,m){
+    oldOnHit(s,m);
+    if(cls==='sor'&&s&&m&&m.hp>0&&!window.__arConfResolving){
+      if(s.el===1)addElement(m,'r',34);
+      else if(s.el===2)addElement(m,'l',34);
+    }
+  };
+  const oldDmgM=dmgM;
+  dmgM=function(m,amount){
+    oldDmgM(m,amount);
+    const el=window.__arCastingElement;
+    if(cls==='sor'&&el&&m&&m.hp>0&&!window.__arConfResolving){
+      if(el==='r'||el==='l')addElement(m,el,34);
+    }
+  };
+  const oldCast=cast;
+  cast=function(i,ma,mp){
+    const d=SK[cls]&&SK[cls].c?SK[cls].c[i]:null;
+    const previous=window.__arCastingElement;
+    window.__arCastingElement=(cls==='sor'&&d)?d.el:null;
+    try{return oldCast(i,ma,mp);}
+    finally{window.__arCastingElement=previous;}
+  };
+  function gauges(m){
+    if(!m.__arElementGauges)m.__arElementGauges={f:0,r:0,l:0,last:Date.now()};
+    const g=m.__arElementGauges;
+    if(Date.now()-g.last>GAUGE_DECAY_DELAY){g.f=0;g.r=0;g.l=0;}
+    return g;
+  }
+  function addElement(m,el,amount){
+    if(!m||m.hp<=0||!['f','r','l'].includes(el))return;
+    const g=gauges(m);
+    g.last=Date.now();
+    g[el]=Math.min(GAUGE_MAX,g[el]+amount);
+    checkReaction(m,g);
+  }
+  function checkReaction(m,g){
+    if(!m||m.hp<=0||(m.__arReactionLock||0)>0||window.__arConfResolving)return;
+    let type=null,keys=[],name='',color='#f6d58b',radius=PAIR_RADIUS,mult=PAIR_DAMAGE;
+    if(g.f>=100&&g.r>=100&&g.l>=100){
+      type='primordial';keys=['f','r','l'];name='RÉACTION PRIMORDIALE';color='#fff1b0';radius=PRIMORDIAL_RADIUS;mult=PRIMORDIAL_DAMAGE;
+    }else if(g.r>=100&&g.f>=100){
+      type='thermal';keys=['r','f'];name='FUSION THERMIQUE';color='#ffb06a';
+    }else if(g.r>=100&&g.l>=100){
+      type='plasma';keys=['r','l'];name='PLASMA';color='#e6a2ff';
+    }else if(g.f>=100&&g.l>=100){
+      type='cryo';keys=['f','l'];name='CRYO-ÉLECTRICITÉ';color='#9ce8ff';
+    }
+    if(!type)return;
+    keys.forEach(k=>g[k]=0);
+    m.__arReactionLock=1.1;
+    window.__arConfResolving=true;
+    const gear=(typeof arBonus==='function'?Math.max(0,arBonus().confluence||0):0);
+    const damage=p.dmg*mult*(1+gear);
+    fx.push({x:m.x,y:m.y,t:0,c:1,col:color,R:radius});
+    for(let i=0;i<18;i++)spark(m.x,m.y-8,R(-125,125),R(-115,35),R(.3,.8),'255,220,170',R(1.7,3.5),0,0,.9,true);
+    const targets=mons.slice().filter(q=>q.hp>0&&Math.hypot(q.x-m.x,q.y-m.y)<=radius);
+    targets.forEach(q=>{
+      if(type==='thermal'){q.slow=Math.max(q.slow||0,2.2);q.chill=Math.min(99,(q.chill||0)+35);}
+      else if(type==='plasma'){q.stun=Math.max(q.stun||0,.65);}
+      else if(type==='cryo'){q.slow=Math.max(q.slow||0,2.8);q.stun=Math.max(q.stun||0,.45);}
+      else {q.slow=Math.max(q.slow||0,3);q.stun=Math.max(q.stun||0,.8);}
+      dmgM(q,damage);
+    });
+    log(name+' ! '+(type==='primordial'?'Les trois éléments sont consumés.':'Les deux jauges élémentaires sont consumées.'),1);
+    window.__arConfResolving=false;
+  }
+  const oldStep=step;
+  step=function(dt){
+    const result=oldStep(dt);
+    if(cls==='sor'){
+      const now=Date.now();
+      for(const m of mons){
+        const g=m.__arElementGauges;
+        if(!g)continue;
+        if(m.__arReactionLock>0)m.__arReactionLock=Math.max(0,m.__arReactionLock-dt);
+        if(now-g.last>GAUGE_DECAY_DELAY){
+          const decay=GAUGE_DECAY_RATE*dt;
+          g.f=Math.max(0,g.f-decay);g.r=Math.max(0,g.r-decay);g.l=Math.max(0,g.l-decay);
+        }
+      }
+    }
+    return result;
+  };
+})();
+</script>
 </body></html>
