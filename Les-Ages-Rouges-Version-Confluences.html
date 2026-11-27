@@ -1994,7 +1994,7 @@ if(typeof SK!=='undefined'&&SK.sor){
   function gauges(m){
     if(!m.__arElementGauges)m.__arElementGauges={f:0,r:0,l:0,last:Date.now()};
     const g=m.__arElementGauges;
-    if(Date.now()-g.last>GAUGE_DECAY_DELAY){g.f=0;g.r=0;g.l=0;}
+    /* La décroissance progressive est gérée dans step(). */
     return g;
   }
   function addElement(m,el,amount){
