@@ -180,23 +180,7 @@ g.save();g.lineWidth=1.3;g.strokeStyle='rgba(255,240,210,.14)';g.beginPath();g.m
 const d=g.getImageData(0,0,T*S,T*S),D=d.data;for(let i=0;i<D.length;i+=4){const n=(Math.random()-.5)*20;D[i]+=n;D[i+1]+=n;D[i+2]+=n}g.putImageData(d,0,0);
 document.documentElement.style.setProperty('--wall','url('+c.toDataURL('image/jpeg',.82)+')')}catch(e){}})();</script>
 
-<style id="skill-performance-test">
-/* Test mobile : alléger le rendu de l'arbre sans toucher aux compétences */
-#sp .ts{contain:layout paint}
-#sp .map{contain:strict;background:#171411!important}
-#sp .map svg.ln{shape-rendering:optimizeSpeed}
-#sp .map *{filter:none!important;box-shadow:none!important;text-shadow:none!important}
-#sp .map{background-image:none!important}
 
-<style id="skill-tree-isolation-test">
-/* Diagnostic temporaire : arbre visuel neutralisé, logique du menu conservée */
-#sp .ts{position:relative!important;contain:strict!important}
-#sp .ts .vp{overflow:hidden!important}
-#sp .ts .map{width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;background:#171411!important}
-#sp .ts .map>*{display:none!important}
-#sp .ts:after{content:"TEST — affichage de l’arbre désactivé temporairement";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:20px;text-align:center;color:#e6dcc3;font:14px Georgia,serif}
-</style>
-</style>
 </head><body>
 <div id="gl"><style>
 #gl{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;color:#d9c9a8;font-family:"Pirata One",Georgia,serif;background:radial-gradient(ellipse at 50% 38%,#3a0d0b 0%,#14080a 45%,#030203 100%);transition:opacity .7s ease;overflow:hidden}
