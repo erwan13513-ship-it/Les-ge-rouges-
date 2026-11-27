@@ -1,4 +1,4 @@
-const CACHE = "les-ages-rouges-v6";
+const CACHE = "les-ages-rouges-v7";
 const GAME = "./Les-Ages-Rouges-Version-Confluences.html";
 const SHELL = [
   "./",
@@ -31,38 +31,31 @@ self.addEventListener("fetch", event => {
   const request = event.request;
   if (request.method !== "GET") return;
 
-  // Navigation: serve the exact requested page from cache, then refresh it.
+  // Always try the network first for HTML so an installed shortcut gets the latest game.
   if (request.mode === "navigate") {
     event.respondWith((async () => {
-      const cached = await caches.match(request);
-      const network = fetch(request).then(response => {
+      try {
+        const response = await fetch(request, { cache: "no-store" });
         if (response && response.ok) {
           const copy = response.clone();
-          caches.open(CACHE).then(cache => cache.put(request, copy));
+          event.waitUntil(caches.open(CACHE).then(cache => cache.put(request, copy)));
         }
         return response;
-      }).catch(() => null);
-
-      if (cached) {
-        event.waitUntil(network.then(() => undefined));
-        return cached;
+      } catch {
+        return await caches.match(request) || await caches.match("./index.html");
       }
-
-      const response = await network;
-      return response || await caches.match("./index.html");
     })());
     return;
   }
 
-  // Static resources: cache first to avoid repeated downloads.
+  // Cache static assets for quicker repeat visits.
   event.respondWith((async () => {
     const cached = await caches.match(request);
     if (cached) return cached;
-
     const response = await fetch(request);
     if (response && response.ok) {
       const copy = response.clone();
-      caches.open(CACHE).then(cache => cache.put(request, copy));
+      event.waitUntil(caches.open(CACHE).then(cache => cache.put(request, copy)));
     }
     return response;
   })());
