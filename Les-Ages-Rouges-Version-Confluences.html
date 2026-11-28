@@ -586,7 +586,7 @@ function flush(){if(CL&&dirty){dirty=false;lw=Date.now();CL.set({chars:D.chars,t
 function cdf(c){return c.df!=null?c.df:(D.diff!=null?D.diff:1)}
 function persist(){D.t=Date.now();dirty=true;try{localStorage.setItem(K,JSON.stringify(D))}catch(e){saveOk=false;$('wn').hidden=false}if(Date.now()-lw>15000)flush()}
 setInterval(flush,20000);
-function save(){if(cur<0||!D.chars[cur])return;D.chars[cur]={name:D.chars[cur].name,cls:cls,gd:gnd,sk:SKR,pa:SKP,va:SKV,df:diff,pts:pts,act:act,actC:actC,ad:actD,aj:actJ,ver:2,cq:(typeof CQ!=='undefined'&&CQ&&CQ.u)||0,lvl:p.lvl,xp:p.xp,need:p.need,max:p.max,dmg:p.dmg,gold:p.gold,sto:sto.slice(),eq:eq.slice(),ky:KEYT?1:0,t:Date.now()};persist()}
+function save(){if(cur<0||!D.chars[cur])return;D.chars[cur]={name:D.chars[cur].name,cls:cls,gd:gnd,sk:SKR,pa:SKP,va:SKV,df:diff,pts:pts,act:act,actC:actC,ad:actD,aj:actJ,ver:2,cq:(typeof CQ!=='undefined'&&CQ&&CQ.u)||0,lvl:p.lvl,xp:p.xp,need:p.need,max:p.max,dmg:p.dmg,gold:p.gold,sto:sto.slice(),eq:eq.slice(),ky:KEYT?1:0,sorcererTree:D.chars[cur].sorcererTree||{path:0,passives:{},variant:{}},t:Date.now()};persist()}
 function ago(t){const m=Math.round((Date.now()-t)/60000);return m<1?'à l\u2019instant':m<60?'il y a '+m+' min':m<1440?'il y a '+Math.round(m/60)+' h':'il y a '+Math.round(m/1440)+' j'}
 function rm(){const s=$('sl');s.innerHTML=D.chars.map((c,i)=>c?'<div class="sc'+(i===sel?' on':'')+'"><div class="av">'+(c.cls==='bar'?'<svg class="ig av2" viewBox="0 0 24 24"><path d="M6 10a6 6 0 0 1 12 0v6H6zM6 10C3 9 3 5 4 3M18 10c3-1 3-5 2-7M9 14h6"/></svg>':'<svg class="ig av2" viewBox="0 0 24 24"><path d="M12 2L8 14M12 2l4 12M3 17q9 5 18 0M8 14q4 2 8 0"/></svg>')+'</div><div class="nf"><b>'+c.name+'</b><small>'+(c.cls==='bar'?'Barbare':(c.gd==='f'?'Sorcière':'Sorcier'))+' niv. '+c.lvl+' · '+['Facile','Normal','Difficile'][cdf(c)]+' · '+c.gold+' or · '+ago(c.t)+'</small></div></div>':'<div class="sc em'+(i===sel?' on':'')+'">+ Nouveau personnage</div>').join('');
 s.querySelectorAll('.sc').forEach((e,i)=>e.onclick=()=>{conf=0;$('md').textContent='Supprimer';sel=i;if(!D.chars[i]){$('cf').hidden=false;$('nm').value=''}else $('cf').hidden=true;rm()});
@@ -885,7 +885,85 @@ function inShape(d,a,m){const S=shp(d),dx=m.x-p.x,dy=m.y-p.y,c=Math.cos(a),n=Mat
 function pd(d){const o=Object.assign({},d);o.mult=(d.mult||1)*(1+pv(d.id,'dmg'));o.rad=d.rad*(1+pv(d.id,'area'));o.cost=Math.round(d.cost*(1-pv(d.id,'cost')));o.sd=1+pv(d.id,'dur');o.ch=1+pv(d.id,'chill');return o}
 function pHtml(id,r){const P=PASS[id];if(!P)return'';const c=SKP[id]||0;return "<div class='pbs'><div class='ph'>Passif"+(r<5?' (rang 5 requis)':' : un seul à la fois')+"</div>"+P.map((q,i)=>"<button class='pb"+(c===i+1?" on":"")+"' data-p='"+(i+1)+"'"+(r<5?" disabled":"")+"><b>"+q.n+"</b>"+q.d+"</button>").join('')+"</div>"}
 let selId=null,tabC=0;let VPS={l:0,t:null,go:1};function vps(){const v=$('tr').querySelector('.vp');if(!v||!v.clientWidth)return;if(cls==='sor'){const m=v.querySelector('.map');if(m){const z=Math.min((v.clientWidth-32)/1200,(v.clientHeight-32)/560,1);m.style.transform='translate(-50%,-50%) scale('+z+')';m.style.left='50%';m.style.top='50%';m.style.transformOrigin='center center'}v.scrollLeft=0;v.scrollTop=0;return}if(VPS.go||VPS.t==null){const h=[[220,400],[590,400],[960,400],[1330,400],[1700,400],[2070,400],[2440,400]][tabC]||[220,400];VPS.l=Math.max(0,h[0]-v.clientWidth/2);VPS.t=Math.max(0,h[1]-v.clientHeight/2);VPS.go=0}v.scrollLeft=VPS.l;v.scrollTop=VPS.t;v.onscroll=()=>{VPS.l=v.scrollLeft;VPS.t=v.scrollTop}}
-function rsp(){const T=[[1,1],[3,4],[6,8]],B=SK[cls].b,C=SK[cls].c,DD=SK[cls].d[0],R2=cls==='bar'?'colère':'mana';
+
+function rspSorcererTree(){
+ const skills=window.SORCERER_SKILLS||[];
+ const meta=window.SORCERER_SKILL_META||{};
+ const state=(D.chars[cur].sorcererTree ||= {path:0,passives:{},variant:{}});
+ const cats=meta.categories||[];
+ const paths=meta.paths||[];
+ const colors=['#f18a43','#8bdcff','#bb9aff','#e9d39b'];
+ const icons={base:'✦',core:'◆',defense:'⬡',conjuration:'✧',mastery:'✺',ultimate:'✹'};
+ const req=[1,4,8,12,16,20];
+ const catIndex=id=>Math.max(0,cats.findIndex(c=>c.id===id));
+ const pathIndex=Number(state.path)||0;
+ const pathSkills=skills.filter(s=>s.path===pathIndex);
+ const groups=cats.map((c,i)=>pathSkills.filter(s=>s.category===c.id));
+ const selected=skills.find(s=>s.id===selId)||pathSkills[0];
+ if(!selId||!pathSkills.some(s=>s.id===selId))selId=selected&&selected.id;
+ const current=skills.find(s=>s.id===selId)||selected;
+ const rank=id=>SKR[id]||0;
+ const learned=skills.filter(s=>rank(s.id)>0).length;
+ const spent=Object.values(SKR).reduce((a,b)=>a+(Number(b)||0),0);
+ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const statLabel=p=>p.label||p.name;
+ let nodes='',lines='';
+ const center=310, radii=[86,128,170,212,254,286];
+ groups.forEach((list,ri)=>{
+   const radius=radii[ri];
+   const count=list.length;
+   list.forEach((s,j)=>{
+     const angle=(-90+(count===1?0:j*360/count)+(ri%2?18:0))*Math.PI/180;
+     const x=center+Math.cos(angle)*radius, y=center+Math.sin(angle)*radius;
+     const r=rank(s.id), locked=p.lvl<req[ri], color=colors[pathIndex];
+     lines+=`<line x1="${center}" y1="${center}" x2="${x}" y2="${y}" class="skill-link ${r?'learned':''}" style="--path-color:${color}"/>`;
+     nodes+=`<button class="skill-node ${locked?'locked':r?'learned':'available'} ${s.id===selId?'selected':''}" data-skill="${s.id}" style="left:${x}px;top:${y}px;--path-color:${color}" aria-label="${esc(s.name)}">
+       <span class="node-glyph">${icons[s.category]||'✦'}</span><small>${esc(s.name)}</small><i>${r?'Rang '+r:locked?'Niv. '+req[ri]:'À apprendre'}</i>
+     </button>`;
+   });
+ });
+ const rings=radii.map((r,i)=>`<circle cx="${center}" cy="${center}" r="${r}" class="tree-ring ring-${i}"/>`).join('');
+ const pathTabs=paths.map((p,i)=>`<button class="path-tab ${i===pathIndex?'active':''}" data-path="${i}" style="--path-color:${colors[i]}"><span>${['🔥','❄','ϟ','✧'][i]}</span>${esc(p.label)}</button>`).join('');
+ let detail='<div class="skill-empty">Sélectionne un nœud pour découvrir sa compétence.</div>';
+ if(current){
+   const r=rank(current.id),ri=catIndex(current.category),locked=p.lvl<req[ri];
+   const pass=state.passives[current.id]||[];
+   const variant=state.variant[current.id]||'';
+   const v=current.variants||{};
+   const vlist=[['ascension',v.ascension],['transmutation',v.transmutation],['mutation',v.mutation]];
+   const passiveHtml=(current.passives||[]).map((p,i)=>`<button class="passive-option ${pass[i]?'chosen':''}" data-passive="${i}" ${!r||pass[i]||pts<1?'disabled':''}><span class="passive-check">${pass[i]?'✓':'+'}</span><span><b>${esc(statLabel(p))}</b><small>${esc(p.value)} ${esc(p.label||'')}</small></span><em>${pass[i]?'Activé':'1 point'}</em></button>`).join('');
+   const variantHtml=vlist.map(([key,item])=>`<button class="major-variant ${variant===key?'chosen':''}" data-variant="${key}" ${r<5||variant?'disabled':''}><b>${esc(item?.name||key)}</b><small>${esc(item?.description||'')}</small><em>${variant===key?'Choisie':r<5?'Rang 5 requis':'Choisir cette variante'}</em></button>`).join('');
+   detail=`<div class="skill-detail">
+    <div class="detail-eyebrow">${esc(cats[ri]?.label||current.category)} · ${esc(paths[pathIndex]?.label||'')}</div>
+    <h2>${esc(current.name)}</h2><p class="skill-desc">${esc(current.description)}</p>
+    <div class="detail-progress"><span>Rang ${r}/5</span><span>Niveau requis : ${req[ri]}</span></div>
+    <button class="learn-skill" id="learnSkill" ${locked||pts<1||r>=5?'disabled':''}>${r?'Améliorer la compétence':'Débloquer la compétence'} · 1 point</button>
+    <h3>Petits bonus passifs</h3><div class="passive-list">${passiveHtml}</div>
+    <h3>Spécialisation majeure</h3><p class="variant-note">Une seule variante peut être choisie pour cette compétence.</p><div class="variant-list">${variantHtml}</div>
+   </div>`;
+ }
+ $('spt').textContent='Arbre des compétences · Sorcier';
+ $('tr').innerHTML=`<div class="sorcerer-tree-shell">
+   <div class="tree-toolbar"><div><b>LES ÂGES ROUGES</b><small>Arbre des compétences du Sorcier</small></div><div class="tree-points"><span>Compétences : ${learned}/30</span><b>Points disponibles : ${pts}</b></div></div>
+   <div class="tree-path-tabs">${pathTabs}</div>
+   <div class="tree-main">
+    <div class="tree-stage"><div class="tree-orbit"><svg viewBox="0 0 620 620" class="tree-svg"><defs><radialGradient id="treeCore"><stop stop-color="#f8e6ff"/><stop offset=".18" stop-color="#a97be2"/><stop offset=".48" stop-color="#39244f"/><stop offset="1" stop-color="#100b1b"/></radialGradient><filter id="treeGlow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>${rings}${lines}<circle cx="310" cy="310" r="44" class="core-halo"/><circle cx="310" cy="310" r="35" fill="url(#treeCore)" stroke="#e6c991" stroke-width="2"/><path d="M310 282 L319 301 L338 310 L319 319 L310 338 L301 319 L282 310 L301 301Z" fill="#f3dfb2" stroke="#fff0d0" stroke-width="1.5"/><circle cx="310" cy="310" r="7" fill="#6d42a0"/></svg>${nodes}</div>
+     <div class="ring-legend">${cats.map((c,i)=>`<span><i>${i+1}</i>${esc(c.label)}</span>`).join('')}</div>
+    </div>
+    <aside class="tree-detail-panel">${detail}</aside>
+   </div>
+   <div class="tree-footer"><span>Les anneaux représentent les six catégories de compétences.</span><span>Les variantes majeures se débloquent au rang 5.</span></div>
+  </div>`;
+ const rerender=()=>{rsp();};
+ $('tr').querySelectorAll('[data-path]').forEach(b=>b.onclick=()=>{state.path=Number(b.dataset.path);selId=null;rsp();});
+ $('tr').querySelectorAll('[data-skill]').forEach(b=>b.onclick=()=>{selId=b.dataset.skill;rsp();});
+ const learn=$('learnSkill');if(learn)learn.onclick=()=>{if(!current||pts<1||p.lvl<req[catIndex(current.category)]||rank(current.id)>=5)return;pts--;SKR[current.id]=rank(current.id)+1;rsp();save();};
+ $('tr').querySelectorAll('[data-passive]').forEach(b=>b.onclick=()=>{const i=Number(b.dataset.passive),a=state.passives[current.id]||[];if(!rank(current.id)||a[i]||pts<1)return;pts--;a[i]=true;state.passives[current.id]=a;rsp();save();});
+ $('tr').querySelectorAll('[data-variant]').forEach(b=>b.onclick=()=>{if(rank(current.id)<5||state.variant[current.id])return;state.variant[current.id]=b.dataset.variant;rsp();save();});
+ skillTreeWarm=true;
+}
+
+function rsp(){if(cls==='sor'){rspSorcererTree();return}const T=[[1,1],[3,4],[6,8]],B=SK[cls].b,C=SK[cls].c,DD=SK[cls].d[0],R2=cls==='bar'?'colère':'mana';
 const HY=225,MAIN_REQ=[1,4,8,12,16,20],NA=[...B.map((d,i)=>[d,T[i][0],50,110,0,15]),...C.map((d,i)=>[d,MAIN_REQ[i]??20,50,110,1,15]),...SK[cls].d.map((d,i)=>[d,[3,6][i],SK[cls].d.length>1?[28,72][i]:50,110,2,15]),...(SK[cls].j||[]).map((d,i)=>[d,[4,7][i],[28,72][i],110,3,15])];
 if(cls==='sor')SOR_TALENTS.forEach(d=>NA.push([d,d.req,50,110,d.cat,d.maxRank]));
 const N=NA,RC=cls==='bar'?'de la colère':'du mana',CAP=['Attaques de base : infligent des dégâts et génèrent '+RC+'. Une seule équipée à la fois.','Compétences principales : coûtent '+RC+'. Une seule équipée à la fois.','Compétences défensives : protection, contrôle et survie.','Conjurations : invoquent des entités magiques ou des lames.','Maîtrises élémentaires : renforcent séparément le feu, le givre et la foudre.','Confluence élémentaire : améliore les réactions déclenchées par plusieurs effets sur une même cible. Déblocage : 2 rangs de Maîtrise élémentaire.','Enchantements : approfondissent les brûlures, le gel et les étourdissements. Déblocage : 1 rang de Maîtrise élémentaire.'];
@@ -2390,4 +2468,58 @@ body.portrait-required>:not(#orientation-lock){visibility:hidden!important}
 #sp .bt button.main:not(:disabled){background:linear-gradient(#8052b2,#422267)!important;border-color:#d4b0ff!important}
 @media(max-height:520px){#sp .map{transform:translate(-50%,-50%) scale(min(calc((100vw - 24px)/1200),calc((100dvh - 190px)/560)))!important}}
 </style>
-</body></html>
+<style id="sorcerer-circular-tree">
+/* Nouvelle interface circulaire du Sorcier — prototype fonctionnel */
+#sp{background:radial-gradient(ellipse at 50% 40%,rgba(80,51,127,.72),rgba(12,8,24,.98) 72%,#030208 100%)!important;backdrop-filter:blur(8px)}
+#sp .card{width:min(97vw,1480px)!important;height:min(96vh,900px)!important;max-height:96vh!important;overflow:hidden!important;padding:14px!important;border:1px solid rgba(207,177,242,.62)!important;border-radius:20px!important;background:linear-gradient(145deg,#211832,#100d1c 58%,#080711)!important;box-shadow:0 0 0 2px rgba(0,0,0,.8),inset 0 0 55px rgba(114,72,168,.22),0 20px 70px #000!important}
+#sp .top{margin:0 0 8px!important}#spt{background:none!important;border:0!important;padding:4px 8px!important;font:700 17px Georgia,serif!important;letter-spacing:1.2px;color:#f2e7ff!important}
+#tr{height:calc(100% - 42px);min-height:0}
+.sorcerer-tree-shell{height:100%;display:flex;flex-direction:column;gap:8px;color:#f0e7ff;font-family:Georgia,serif}
+.tree-toolbar{display:flex;align-items:center;justify-content:space-between;padding:3px 8px;color:#f2dfbd}
+.tree-toolbar b{display:block;font-size:16px;letter-spacing:2px}.tree-toolbar small{display:block;color:#b9a9d2;font:12px system-ui}
+.tree-points{display:flex;gap:16px;font:12px system-ui;color:#c9b9df}.tree-points b{color:#f4d99e}
+.tree-path-tabs{display:flex;justify-content:center;gap:9px;flex-wrap:wrap}
+.path-tab{border:1px solid rgba(196,164,231,.3);border-radius:20px;padding:8px 18px;background:linear-gradient(#2c2140,#171124);color:#e8ddf5;font-weight:700;box-shadow:inset 0 1px rgba(255,255,255,.1);font-size:13px}
+.path-tab span{margin-right:7px;color:var(--path-color);font-size:16px}
+.path-tab.active{border-color:var(--path-color);box-shadow:0 0 15px color-mix(in srgb,var(--path-color) 45%,transparent),inset 0 0 12px rgba(255,255,255,.08);color:#fff}
+.tree-main{display:grid;grid-template-columns:minmax(430px,1.15fr) minmax(300px,.85fr);gap:14px;flex:1;min-height:0}
+.tree-stage{position:relative;display:flex;align-items:center;justify-content:center;min-height:0;overflow:hidden;border:1px solid rgba(177,143,224,.22);border-radius:16px;background:radial-gradient(ellipse at 50% 47%,rgba(98,66,144,.25),rgba(14,10,26,.96) 68%),repeating-radial-gradient(circle at center,transparent 0 58px,rgba(209,185,239,.035) 59px 60px)}
+.tree-orbit{position:relative;width:min(100%,620px);aspect-ratio:1;max-height:100%;flex:none}
+.tree-svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.tree-ring{fill:none;stroke:rgba(196,166,232,.23);stroke-width:1.2;stroke-dasharray:2 8}
+.ring-0{stroke:rgba(237,213,167,.52);stroke-width:2}.ring-5{stroke:rgba(197,164,244,.36);stroke-width:2}
+.skill-link{stroke:rgba(174,142,213,.24);stroke-width:1.5;stroke-dasharray:3 7}.skill-link.learned{stroke:var(--path-color);stroke-width:2.5;filter:url(#treeGlow);stroke-dasharray:none}
+.core-halo{fill:rgba(179,133,236,.08);stroke:rgba(227,199,255,.65);stroke-width:1.4;filter:url(#treeGlow)}
+.skill-node{position:absolute;transform:translate(-50%,-50%);width:58px;height:58px;border-radius:50%;border:1px solid rgba(226,205,248,.7);background:radial-gradient(circle at 35% 25%,#57476f,#211831 68%,#0a0712);color:#f7ecff;box-shadow:0 0 0 3px rgba(9,6,17,.92),0 4px 12px #000,0 0 14px color-mix(in srgb,var(--path-color) 35%,transparent);display:flex;align-items:center;justify-content:center;flex-direction:column;padding:3px;z-index:2}
+.skill-node .node-glyph{font-size:20px;text-shadow:0 0 10px var(--path-color)}
+.skill-node small{position:absolute;top:calc(100% + 7px);width:104px;text-align:center;font:700 10px system-ui;color:#f2e9ff;text-shadow:0 2px 4px #000;pointer-events:none}
+.skill-node i{position:absolute;top:100%;margin-top:20px;font:9px system-ui;color:#d4c2ed;white-space:nowrap;font-style:normal}
+.skill-node.learned{border:2px solid #f3d9a5;background:radial-gradient(circle at 35% 25%,#8667a9,#302043 72%);box-shadow:0 0 0 3px #100a1b,0 0 18px var(--path-color)}
+.skill-node.selected{outline:2px solid #fff0c8;outline-offset:5px;z-index:5}
+.skill-node.locked{filter:grayscale(.8);opacity:.5}
+.ring-legend{position:absolute;left:8px;bottom:8px;display:flex;flex-wrap:wrap;gap:5px;max-width:230px;pointer-events:none}
+.ring-legend span{font:9px system-ui;color:#c8b9dd;background:rgba(10,7,18,.78);border:1px solid rgba(191,165,227,.2);padding:3px 6px;border-radius:8px}
+.ring-legend i{font-style:normal;color:#f1d49a;margin-right:4px}
+.tree-detail-panel{min-width:0;overflow:auto;border:1px solid rgba(191,161,229,.32);border-radius:14px;background:linear-gradient(145deg,rgba(39,29,57,.95),rgba(13,10,23,.98));padding:16px;box-shadow:inset 0 0 35px rgba(128,87,177,.12)}
+.skill-detail h2{font-size:25px;margin:6px 0;color:#f3dfb8;text-shadow:0 0 16px rgba(221,185,255,.24)}
+.detail-eyebrow{font:11px system-ui;text-transform:uppercase;letter-spacing:1.5px;color:#c1a8e4}
+.skill-desc,.variant-note{font:13px/1.5 system-ui;color:#cfc4dc}
+.detail-progress{display:flex;justify-content:space-between;margin:12px 0;font:11px system-ui;color:#c7b6dc}
+.learn-skill{width:100%;padding:11px;border:1px solid #dfbf82;border-radius:9px;background:linear-gradient(#7955a3,#38224f);color:#fff1d2;font-weight:800}
+.learn-skill:disabled{opacity:.42}
+.skill-detail h3{margin:17px 0 7px;font-size:14px;color:#eed8ad}
+.passive-list,.variant-list{display:grid;gap:7px}
+.passive-option,.major-variant{display:flex;align-items:center;gap:9px;text-align:left;padding:9px;border-radius:9px;border:1px solid rgba(190,164,224,.25);background:rgba(8,6,16,.48);color:#eee4f7}
+.passive-option:disabled,.major-variant:disabled{opacity:.7}
+.passive-check{width:25px;height:25px;display:grid;place-items:center;border-radius:50%;background:#342344;color:#e8c98e;font-weight:bold}
+.passive-option.chosen,.major-variant.chosen{border-color:#e8c98e;background:rgba(99,69,130,.4);box-shadow:0 0 12px rgba(199,156,245,.16)}
+.passive-option span:nth-child(2),.major-variant{flex:1}
+.passive-option b,.major-variant b{display:block;font:700 12px system-ui}
+.passive-option small,.major-variant small{display:block;margin-top:3px;font:11px/1.35 system-ui;color:#c8bbd8}
+.passive-option em,.major-variant em{font:10px system-ui;color:#e4c990;font-style:normal;white-space:nowrap}
+.major-variant{display:block}.major-variant em{display:block;margin-top:6px}
+.skill-empty{color:#c8badb;font:14px system-ui;padding:20px}
+.tree-footer{display:flex;justify-content:space-between;color:#9e8cb9;font:10px system-ui;padding:0 6px}
+@media(max-width:760px){#sp .card{padding:8px!important;width:98vw!important;height:96vh!important}.tree-main{grid-template-columns:minmax(0,1fr) minmax(250px,.85fr);gap:7px}.tree-detail-panel{padding:9px}.skill-node{width:48px;height:48px}.skill-node small{font-size:8px;width:78px}.skill-node i{font-size:8px}.tree-points{gap:7px;font-size:10px}.path-tab{padding:6px 10px;font-size:11px}.skill-detail h2{font-size:18px}}
+@media(max-height:460px){.tree-toolbar{display:none}.tree-path-tabs{gap:4px}.path-tab{padding:4px 8px}.tree-footer{display:none}.tree-main{grid-template-columns:minmax(0,1fr) minmax(240px,.8fr)}}
+</style></body></html>
