@@ -906,7 +906,7 @@ function rspSorcererTree(){
  const learned=skills.filter(s=>rank(s.id)>0).length;
  const spent=Object.values(SKR).reduce((a,b)=>a+(Number(b)||0),0);
  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- const statLabel=p=>p.label||p.name;
+ const statLabel=p=>p.name||p.label;
  let nodes='',lines='';
  const center=310, radii=[86,128,170,212,254,286];
  groups.forEach((list,ri)=>{
