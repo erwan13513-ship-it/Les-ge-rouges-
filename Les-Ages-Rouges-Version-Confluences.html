@@ -2787,30 +2787,102 @@ canvas#c{position:fixed!important;inset:0!important;display:block!important;widt
 </style>
 
 <style id="ar-layout-v6">
-/* Arbre : conserver les proportions de l'illustration et centrer le zoom sur le centre réel de la carte. */
-#tr .ar2-map{background-size:contain!important;background-position:center center!important;background-repeat:no-repeat!important;transform-origin:50% 50%!important}
-#tr .ar2-map-viewport{overflow:hidden!important;touch-action:none!important}
-#tr .ar2-panel{
- background-image:url('./assets/panneau-competence.png')!important;
- background-position:center center!important;background-repeat:no-repeat!important;
- background-size:100% 100%!important;
+/* V5 — correction structurelle : fond de l'arbre dans la carte zoomable,
+   panneau unique, et surface de jeu réellement bord à bord. */
+:root{box-sizing:border-box!important;padding:0!important}
+html,body{
+ width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;
+ margin:0!important;padding:0!important;overflow:hidden!important;background:#1a1612!important;
+}
+body{
+ position:fixed!important;inset:0!important;display:block!important;
+ width:100vw!important;height:100vh!important;height:100dvh!important;
+ min-height:0!important;max-height:none!important;
+}
+canvas#c{
+ position:fixed!important;left:0!important;top:0!important;right:0!important;bottom:0!important;
+ display:block!important;width:100vw!important;height:100vh!important;height:100dvh!important;
+ min-width:100vw!important;min-height:100dvh!important;max-width:none!important;max-height:none!important;
+ margin:0!important;padding:0!important;border:0!important;outline:0!important;box-shadow:none!important;
+ object-fit:fill!important;z-index:0!important;background:#1a1612!important;
+}
+#chat{position:fixed!important;left:0!important;right:0!important;bottom:0!important;width:100%!important;z-index:3!important}
+#hud{z-index:4!important}
+
+/* La fenêtre de compétences ne doit plus afficher l'ancienne illustration de carte. */
+#sp{
+ position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;height:100dvh!important;
+ max-width:none!important;max-height:none!important;margin:0!important;padding:0!important;
+ box-sizing:border-box!important;overflow:hidden!important;background:transparent!important;
+}
+#sp .card{
+ position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
+ min-width:0!important;min-height:0!important;max-width:none!important;max-height:none!important;
+ margin:0!important;padding:calc(8px + env(safe-area-inset-top,0px)) calc(10px + env(safe-area-inset-right,0px)) calc(8px + env(safe-area-inset-bottom,0px)) calc(10px + env(safe-area-inset-left,0px))!important;
+ box-sizing:border-box!important;overflow:hidden!important;
+ background-color:rgba(10,6,18,.98)!important;background-image:none!important;
  border:0!important;outline:0!important;border-radius:0!important;box-shadow:none!important;
 }
-#tr .ar2-panel:before,#tr .ar2-panel:after{content:none!important;display:none!important}
-/* Retirer les anciens blocs d'interface qui encombraient l'image du panneau.
-   Les informations de la compétence, ses variantes et les actions restent disponibles. */
-#tr .ar2-panel>.ar2-points,
-#tr .ar2-panel>.ar2-passive-title,
-#tr .ar2-panel>.ar2-passives{display:none!important}
-#tr .ar2-panel>.ar2-detail,
-#tr .ar2-panel>.ar2-old-upgrades,
-#tr .ar2-panel>.ar2-actions{
- background:transparent!important;background-image:none!important;
- border:0!important;border-radius:0!important;box-shadow:none!important;
+#sp .card:before,#sp .card:after{content:none!important;display:none!important}
+#sp .top,#sp #tr{position:relative!important;z-index:2!important}
+#sp #tr{display:flex!important;flex:1 1 auto!important;min-height:0!important;overflow:hidden!important}
+#tr .ar2-root{min-width:0!important;min-height:0!important;width:100%!important}
+#tr .ar2-layout{
+ display:grid!important;grid-template-columns:minmax(0,1fr) minmax(230px,290px)!important;
+ gap:10px!important;align-items:stretch!important;min-width:0!important;min-height:0!important;
+ transform:none!important;zoom:1!important;
 }
-#tr .ar2-panel>.ar2-detail{padding:10px 4px!important;overflow:auto!important}
+#tr .ar2-map-viewport{
+ position:relative!important;min-width:0!important;min-height:0!important;overflow:hidden!important;
+ touch-action:none!important;transform:none!important;zoom:1!important;
+ background:transparent!important;background-image:none!important;
+ border:0!important;border-radius:0!important;outline:0!important;box-shadow:none!important;
+}
+#tr .ar2-map-viewport:before,#tr .ar2-map-viewport:after{content:none!important;display:none!important}
+/* L'illustration est maintenant dans le même élément que les lignes, sceaux et nœuds :
+   le zoom tactile agrandit donc toute la carte, pas seulement les icônes. */
+#tr .ar2-map{
+ position:absolute!important;left:50%;top:50%;
+ transform-origin:center center!important;will-change:transform!important;
+ background-color:transparent!important;
+ background-image:url('./assets/skill-tree-arcane-v4.png')!important;
+ background-position:center center!important;background-repeat:no-repeat!important;
+ background-size:contain!important;
+}
+#tr .ar2-panel{
+ position:relative!important;z-index:2!important;width:100%!important;min-width:0!important;
+ max-width:290px!important;min-height:0!important;max-height:none!important;flex-shrink:0!important;
+ overflow:auto!important;box-sizing:border-box!important;padding:18px 16px 16px!important;
+ background-color:transparent!important;background-image:url('./assets/panneau-competence.png')!important;
+ background-position:center center!important;background-repeat:no-repeat!important;
+ background-size:100% 100%!important;border:0!important;outline:0!important;
+ border-radius:0!important;box-shadow:none!important;transform:none!important;zoom:1!important;
+ isolation:isolate!important;
+}
+#tr .ar2-panel:before,#tr .ar2-panel:after{content:none!important;display:none!important}
+#tr .ar2-panel>.ar2-points,#tr .ar2-panel>.ar2-detail,
+#tr .ar2-panel>.ar2-passive-title,#tr .ar2-panel>.ar2-passives,
+#tr .ar2-panel>.ar2-old-upgrades,#tr .ar2-panel>.ar2-actions{
+ background:transparent!important;background-image:none!important;border:0!important;
+ border-radius:0!important;box-shadow:none!important;
+}
+#tr .ar2-panel>.ar2-points,#tr .ar2-panel>.ar2-passive-title,#tr .ar2-panel>.ar2-passives{display:none!important}
+#tr .ar2-panel>.ar2-points{padding:4px 2px!important}
+#tr .ar2-panel>.ar2-detail{padding:8px 2px!important;overflow:visible!important}
 #tr .ar2-panel>.ar2-old-upgrades{max-height:28vh!important;overflow:auto!important;padding:4px!important}
 #tr .ar2-panel .pbs{background:transparent!important;border:0!important;box-shadow:none!important}
 #tr .ar2-panel .pb{background:rgba(12,7,20,.62)!important}
+#tr .ar2-panel .ar2-passive{background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important}
+#tr .ar2-panel .ar2-old-upgrades,#tr .ar2-panel .ar2-old-upgrades>*{background:transparent!important;box-shadow:none!important}
+#tr .ar2-panel .ar2-actions button{position:relative!important;z-index:1!important}
+@media(max-width:650px){
+ #tr .ar2-layout{display:flex!important;flex-direction:column!important;gap:6px!important}
+ #tr .ar2-map-viewport{height:min(43vh,340px)!important;min-height:180px!important;flex:0 0 min(43vh,340px)!important}
+ #tr .ar2-panel{width:100%!important;max-width:none!important;min-height:220px!important;max-height:calc(100% - 185px)!important;flex:1 1 auto!important;padding:14px 18px!important}
+}
+@media(max-height:520px) and (min-width:651px){
+ #tr .ar2-layout{grid-template-columns:minmax(0,1fr) 230px!important;gap:8px!important}
+ #tr .ar2-panel{width:230px!important;max-width:230px!important;padding:10px 12px!important}
+}
 </style>
 </body></html>
