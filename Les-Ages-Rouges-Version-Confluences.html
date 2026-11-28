@@ -917,7 +917,7 @@ function rspSorcererTree(){
      const x=center+Math.cos(angle)*radius, y=center+Math.sin(angle)*radius;
      const r=rank(s.id), locked=p.lvl<req[ri], color=colors[pathIndex];
      lines+=`<line x1="${center}" y1="${center}" x2="${x}" y2="${y}" class="skill-link ${r?'learned':''}" style="--path-color:${color}"/>`;
-     nodes+=`<button class="skill-node ${locked?'locked':r?'learned':'available'} ${s.id===selId?'selected':''}" data-skill="${s.id}" style="left:${x}px;top:${y}px;--path-color:${color}" aria-label="${esc(s.name)}">
+     nodes+=`<button class="skill-node ${locked?'locked':r?'learned':'available'} ${s.id===selId?'selected':''}" data-skill="${s.id}" style="left:${(x/620*100).toFixed(4)}%;top:${(y/620*100).toFixed(4)}%;--path-color:${color}" aria-label="${esc(s.name)}">
        <span class="node-glyph">${icons[s.category]||'✦'}</span><small>${esc(s.name)}</small><i>${r?'Rang '+r:locked?'Niv. '+req[ri]:'À apprendre'}</i>
      </button>`;
    });
@@ -2490,10 +2490,10 @@ body.portrait-required>:not(#orientation-lock){visibility:hidden!important}
 .ring-0{stroke:rgba(237,213,167,.52);stroke-width:2}.ring-5{stroke:rgba(197,164,244,.36);stroke-width:2}
 .skill-link{stroke:rgba(174,142,213,.24);stroke-width:1.5;stroke-dasharray:3 7}.skill-link.learned{stroke:var(--path-color);stroke-width:2.5;filter:url(#treeGlow);stroke-dasharray:none}
 .core-halo{fill:rgba(179,133,236,.08);stroke:rgba(227,199,255,.65);stroke-width:1.4;filter:url(#treeGlow)}
-.skill-node{position:absolute;transform:translate(-50%,-50%);width:58px;height:58px;border-radius:50%;border:1px solid rgba(226,205,248,.7);background:radial-gradient(circle at 35% 25%,#57476f,#211831 68%,#0a0712);color:#f7ecff;box-shadow:0 0 0 3px rgba(9,6,17,.92),0 4px 12px #000,0 0 14px color-mix(in srgb,var(--path-color) 35%,transparent);display:flex;align-items:center;justify-content:center;flex-direction:column;padding:3px;z-index:2}
-.skill-node .node-glyph{font-size:20px;text-shadow:0 0 10px var(--path-color)}
-.skill-node small{position:absolute;top:calc(100% + 7px);width:104px;text-align:center;font:700 10px system-ui;color:#f2e9ff;text-shadow:0 2px 4px #000;pointer-events:none}
-.skill-node i{position:absolute;top:100%;margin-top:20px;font:9px system-ui;color:#d4c2ed;white-space:nowrap;font-style:normal}
+.skill-node{position:absolute;transform:translate(-50%,-50%);width:clamp(34px,8.5%,58px);height:clamp(34px,8.5%,58px);border-radius:50%;border:1px solid rgba(226,205,248,.7);background:radial-gradient(circle at 35% 25%,#57476f,#211831 68%,#0a0712);color:#f7ecff;box-shadow:0 0 0 3px rgba(9,6,17,.92),0 4px 12px #000,0 0 14px color-mix(in srgb,var(--path-color) 35%,transparent);display:flex;align-items:center;justify-content:center;flex-direction:column;padding:3px;z-index:2}
+.skill-node .node-glyph{font-size:clamp(13px,3vw,20px);text-shadow:0 0 10px var(--path-color)}
+.skill-node small{position:absolute;top:calc(100% + 5px);width:clamp(66px,17%,104px);text-align:center;font:700 10px system-ui;color:#f2e9ff;text-shadow:0 2px 4px #000;pointer-events:none}
+.skill-node i{position:absolute;top:100%;margin-top:clamp(14px,3.2vw,20px);font:9px system-ui;color:#d4c2ed;white-space:nowrap;font-style:normal}
 .skill-node.learned{border:2px solid #f3d9a5;background:radial-gradient(circle at 35% 25%,#8667a9,#302043 72%);box-shadow:0 0 0 3px #100a1b,0 0 18px var(--path-color)}
 .skill-node.selected{outline:2px solid #fff0c8;outline-offset:5px;z-index:5}
 .skill-node.locked{filter:grayscale(.8);opacity:.5}
@@ -2520,6 +2520,6 @@ body.portrait-required>:not(#orientation-lock){visibility:hidden!important}
 .major-variant{display:block}.major-variant em{display:block;margin-top:6px}
 .skill-empty{color:#c8badb;font:14px system-ui;padding:20px}
 .tree-footer{display:flex;justify-content:space-between;color:#9e8cb9;font:10px system-ui;padding:0 6px}
-@media(max-width:760px){#sp .card{padding:8px!important;width:98vw!important;height:96vh!important}.tree-main{grid-template-columns:minmax(0,1fr) minmax(250px,.85fr);gap:7px}.tree-detail-panel{padding:9px}.skill-node{width:48px;height:48px}.skill-node small{font-size:8px;width:78px}.skill-node i{font-size:8px}.tree-points{gap:7px;font-size:10px}.path-tab{padding:6px 10px;font-size:11px}.skill-detail h2{font-size:18px}}
+@media(max-width:900px) and (orientation:landscape){.tree-orbit{width:min(100%,620px);max-height:100%}.tree-stage{min-width:0}.skill-node small{font-size:clamp(7px,1.2vw,10px)}.skill-node i{font-size:clamp(7px,1vw,9px)}.tree-detail-panel{font-size:12px}.skill-detail h2{font-size:clamp(16px,2.4vw,23px)}.tree-footer{font-size:9px}}\n@media(max-width:760px){#sp .card{padding:8px!important;width:98vw!important;height:96vh!important}.tree-main{grid-template-columns:minmax(0,1fr) minmax(250px,.85fr);gap:7px}.tree-detail-panel{padding:9px}.skill-node{width:48px;height:48px}.skill-node small{font-size:8px;width:78px}.skill-node i{font-size:8px}.tree-points{gap:7px;font-size:10px}.path-tab{padding:6px 10px;font-size:11px}.skill-detail h2{font-size:18px}}
 @media(max-height:460px){.tree-toolbar{display:none}.tree-path-tabs{gap:4px}.path-tab{padding:4px 8px}.tree-footer{display:none}.tree-main{grid-template-columns:minmax(0,1fr) minmax(240px,.8fr)}}
 </style></body></html>
