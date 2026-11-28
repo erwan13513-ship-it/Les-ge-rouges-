@@ -2715,6 +2715,28 @@ body.portrait-required>:not(#orientation-lock){visibility:hidden!important}
 #tr .ar2-actions{margin-top:auto!important}
 @media(max-width:900px){#tr .ar2-layout{grid-template-columns:minmax(0,1fr) minmax(255px,300px)!important;gap:8px!important}#tr .ar2-panel{padding:8px!important}}
 @media(max-width:650px){#tr .ar2-layout{display:flex!important;flex-direction:column!important;min-height:0!important}#tr .ar2-map-viewport{height:min(48vh,390px)!important;min-height:230px!important;flex:none!important}#tr .ar2-panel{max-height:none!important;overflow:visible!important}#tr .ar2-detail-icon{width:62px;height:62px;flex-basis:62px}#tr .ar2-detail-icon svg{width:38px;height:38px}#tr .ar2-skill-title b{font-size:19px!important}#tr .ar2-stat b{font-size:15px}}
+
+/* AR_SKILL_PANEL_IMAGE_V1 — panneau illustré réel avec texte dynamique superposé */
+#tr .ar2-panel{
+ background-color:rgba(12,7,24,.94)!important;
+ background-image:url('./assets/panneau-competence.png')!important;
+ background-position:center!important;
+ background-repeat:no-repeat!important;
+ background-size:100% 100%!important;
+ border:0!important;
+ border-radius:0!important;
+ box-shadow:none!important;
+ padding:18px 16px 16px!important;
+}
+#tr .ar2-points{background:rgba(10,6,20,.62);border-color:rgba(218,184,239,.38)}
+#tr .ar2-detail{background:rgba(8,5,17,.50);border:1px solid rgba(204,171,231,.28);box-shadow:inset 0 0 18px rgba(0,0,0,.4)}
+#tr .ar2-passive{background:rgba(15,8,27,.82)}
+#tr .ar2-actions button{background:linear-gradient(145deg,rgba(57,35,78,.94),rgba(17,11,27,.96))}
+@media(max-width:720px){
+ #tr .ar2-panel{flex:0 0 258px!important;padding:14px 12px 12px!important;gap:5px!important}
+ #tr .ar2-detail{min-height:84px!important;max-height:108px!important;padding:7px!important}
+ #tr .ar2-passives{max-height:40px!important}
+}
 </style>
 
 </body></html>
