@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1000">
+<defs>
+ <radialGradient id="void"><stop stop-color="#59366f"/><stop offset=".38" stop-color="#21112f"/><stop offset="1" stop-color="#07050d"/></radialGradient>
+ <radialGradient id="violet"><stop stop-color="#d7a7ff" stop-opacity=".8"/><stop offset=".28" stop-color="#9a55d4" stop-opacity=".25"/><stop offset="1" stop-color="#4a1b73" stop-opacity="0"/></radialGradient>
+ <radialGradient id="fire"><stop stop-color="#ff9a4c" stop-opacity=".65"/><stop offset="1" stop-color="#e34a21" stop-opacity="0"/></radialGradient>
+ <radialGradient id="ice"><stop stop-color="#75d9ff" stop-opacity=".6"/><stop offset="1" stop-color="#278dce" stop-opacity="0"/></radialGradient>
+ <radialGradient id="storm"><stop stop-color="#ffe18b" stop-opacity=".55"/><stop offset="1" stop-color="#d89a32" stop-opacity="0"/></radialGradient>
+ <linearGradient id="gold" x2="1" y2="1"><stop stop-color="#4e2c17"/><stop offset=".2" stop-color="#f8dfa7"/><stop offset=".48" stop-color="#9d6c36"/><stop offset=".72" stop-color="#f2d49a"/><stop offset="1" stop-color="#4b2b18"/></linearGradient>
+ <filter id="blur"><feGaussianBlur stdDeviation="30"/></filter>
+ <filter id="glow"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+ <pattern id="grain" width="90" height="90" patternUnits="userSpaceOnUse"><path d="M0 22L90 22M22 0L22 90" stroke="#d7b889" stroke-opacity=".025"/><circle cx="12" cy="68" r="1" fill="#e9d5b5" opacity=".14"/><circle cx="70" cy="13" r="1" fill="#e9d5b5" opacity=".12"/></pattern>
+</defs>
+<rect width="1200" height="1000" fill="url(#void)"/>
+<ellipse cx="250" cy="230" rx="340" ry="290" fill="url(#fire)" filter="url(#blur)"/>
+<ellipse cx="950" cy="230" rx="340" ry="290" fill="url(#ice)" filter="url(#blur)"/>
+<ellipse cx="260" cy="790" rx="330" ry="300" fill="url(#storm)" filter="url(#blur)"/>
+<ellipse cx="950" cy="790" rx="360" ry="300" fill="url(#violet)" filter="url(#blur)"/>
+<rect width="1200" height="1000" fill="url(#grain)"/>
+<g fill="none" stroke="url(#gold)" filter="url(#glow)" opacity=".8">
+ <path stroke-width="5" d="M34 22H1166Q1178 22 1178 34V966Q1178 978 1166 978H34Q22 978 22 966V34Q22 22 34 22Z"/>
+ <path stroke-width="1.5" d="M48 38H1152V962H48Z"/>
+ <path stroke-width="2" d="M22 150Q85 150 85 34M1178 150Q1115 150 1115 34M22 850Q85 850 85 966M1178 850Q1115 850 1115 966"/>
+ <path stroke-width="3" d="M42 110L42 42 110 42M1090 42H1158V110M42 890V958H110M1090 958H1158V890"/>
+ <circle cx="600" cy="500" r="426" stroke-width="2.5"/><circle cx="600" cy="500" r="410" stroke-dasharray="2 8"/>
+ <circle cx="600" cy="500" r="365" stroke-width="1.4"/><circle cx="600" cy="500" r="350" stroke-dasharray="1 9"/>
+ <circle cx="600" cy="500" r="290" stroke-width="1.4"/><circle cx="600" cy="500" r="270" stroke-dasharray="3 9"/>
+ <path d="M600 75V925M175 500H1025M300 200L900 800M900 200L300 800" stroke-width="1" opacity=".5"/>
+</g>
+<g fill="none" stroke="#e4c28a" opacity=".52">
+ <path d="M600 56l18 30-18 30-18-30zM600 884l18 30-18 30-18-30zM156 500l30-18 30 18-30 18zM984 500l30-18 30 18-30 18z" stroke-width="3"/>
+ <path d="M600 130l10 20-10 20-10-20zM600 830l10 20-10 20-10-20zM230 500l20-10 20 10-20 10zM930 500l20-10 20 10-20 10z"/>
+ <circle cx="600" cy="500" r="180" stroke-dasharray="2 12"/><circle cx="600" cy="500" r="160"/>
+</g>
+<circle cx="600" cy="500" r="135" fill="url(#violet)" opacity=".8"/>
+<g fill="none" stroke="url(#gold)" stroke-width="2" opacity=".85">
+ <circle cx="600" cy="500" r="115"/><circle cx="600" cy="500" r="101" stroke-dasharray="4 7"/>
+ <path d="M600 378l22 78 78 44-78 22-22 78-22-78-78-22 78-44z"/>
+</g>
+<g fill="#e7c995" opacity=".6" font-family="serif" font-size="18" text-anchor="middle">
+ <text x="600" y="106">✧</text><text x="600" y="912">✧</text><text x="112" y="505">✧</text><text x="1088" y="505">✧</text>
+ <text x="600" y="64" font-size="12" letter-spacing="8">✦  ✦  ✦  ✦  ✦</text>
+</g>
+</svg>
