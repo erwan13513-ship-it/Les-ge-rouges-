@@ -1,10 +1,11 @@
-const CACHE = "les-ages-rouges-v16";
+const CACHE = "les-ages-rouges-v17";
 const GAME = "./Les-Ages-Rouges-Version-Confluences.html";
 const SHELL = [
   "./",
   "./index.html",
   GAME,
   "./manifest.webmanifest",
+  "./assets/panneau-competence.png",
   "./icons/icon-192.png?v=4",
   "./icons/icon-512.png?v=4"
 ];
