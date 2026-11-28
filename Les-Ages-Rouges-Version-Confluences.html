@@ -1001,7 +1001,7 @@ function rsp(){
  }else if(selectedSlot){
   detail='<b>'+selectedSlot.label+'</b><em>'+selectedSlot.cat+'</em><p>Emplacement réservé pour la nouvelle génération de compétences. Il sera activé lorsque cette compétence aura été conçue et intégrée au moteur de jeu.</p><small>Niveau cible : '+selectedSlot.req+' · Statut : à concevoir</small>';
  }else{
-  detail='<b>Sceau arcanique</b><em>Arbre du Sorcier · 30 emplacements</em><p>Choisis un nœud pour consulter ses détails. Les quatre voies s'organisent autour du sceau central. Les compétences réservées ne sont pas encore disponibles.</p><small>Compétences prévues : 3 base · 6 principales · 5 défensives · 6 maîtrises actives · 5 conjurations · 5 ultimes</small>';
+  detail='<b>Sceau arcanique</b><em>Arbre du Sorcier · 30 emplacements</em><p>Choisis un nœud pour consulter ses détails. Les quatre voies rayonnent autour du sceau central. Les compétences réservées ne sont pas encore disponibles.</p><small>Compétences prévues : 3 base · 6 principales · 5 défensives · 6 maîtrises actives · 5 conjurations · 5 ultimes</small>';
  }
  const passives=SOR_TALENTS.map(d=>'<button type="button" class="ar2-passive '+(selId===d.id?'selected':'')+'" data-passive="'+d.id+'" title="'+d.n+'">'+d.ic+'<span>'+d.n+'</span><small>'+rk(d.id)+'/5</small></button>').join('');
  $('spt').textContent='Arbre des compétences · Sorcier';
