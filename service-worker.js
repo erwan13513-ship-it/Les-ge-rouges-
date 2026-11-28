@@ -1,4 +1,4 @@
-const CACHE = "les-ages-rouges-v14";
+const CACHE = "les-ages-rouges-v15";
 const GAME = "./Les-Ages-Rouges-Version-Confluences.html";
 const SHELL = [
   "./",
