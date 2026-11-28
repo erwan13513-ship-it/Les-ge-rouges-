@@ -1064,9 +1064,20 @@ function rsp(){
  const passives=SOR_TALENTS.map(d=>'<button type="button" class="ar2-passive '+(selId===d.id?'selected':'')+'" data-passive="'+d.id+'" title="'+d.n+'">'+d.ic+'<span>'+d.n+'</span><small>'+rk(d.id)+'/5</small></button>').join('');
  $('spt').textContent='Arbre des compétences · Sorcier';
  $('tr').innerHTML='<div class="ar2-root"><div class="ar2-legend">'+branchNames.map((n,i)=>'<span style="--branch:'+colors[i]+'"><i></i>'+n+'</span>').join('')+'</div><div class="ar2-layout"><div class="ar2-map-viewport"><div class="ar2-map" style="width:'+mapW+'px;height:'+mapH+'px"><svg class="ar2-lines" viewBox="0 0 '+mapW+' '+mapH+'" width="'+mapW+'" height="'+mapH+'">'+paths+'</svg>'+sealHtml+'<div class="ar2-core" style="left:'+center.x+'px;top:'+center.y+'px"><span>✧</span><b>CŒUR<br>PRIMORDIAL</b></div>'+nodes+'</div></div><aside class="ar2-panel"><div class="ar2-points"><span>Points dépensés <b>'+spent+'</b></span><span>Disponibles <b>'+pts+'</b></span></div><div class="ar2-detail">'+detail+'</div><div class="ar2-passive-title">Talents passifs existants <small>hors des 30 compétences actives</small></div><div class="ar2-passives">'+passives+'</div>'+(selected?'<div class="ar2-old-upgrades">'+pHtml(selected[0].id,rk(selected[0].id))+vHtml(selected[0].id,rk(selected[0].id))+'</div>':'')+'<div class="ar2-actions"><button id="ba" class="main">Attribuer</button><button id="br">Retirer</button><button id="be">Équiper</button></div></aside></div><div class="ar2-foot">30 emplacements prévus · '+slots.filter(s=>s.id).length+' compétences déjà présentes dans le moteur · '+slots.filter(s=>!s.id).length+' à concevoir</div></div>';
- const fit=()=>{const vp=$('tr')&&$('tr').querySelector('.ar2-map-viewport'),map=vp&&vp.querySelector('.ar2-map');if(!vp||!map)return;const scale=Math.min((vp.clientWidth-16)/mapW,(vp.clientHeight-16)/mapH,1);map.style.transform='translate(-50%,-50%) scale('+Math.max(.25,scale)+')';map.style.left='50%';map.style.top='50%'};
- if(!window.__ar2ResizeBound){window.__ar2ResizeBound=true;window.addEventListener('resize',()=>{const vp=$('tr')&&$('tr').querySelector('.ar2-map-viewport'),map=vp&&vp.querySelector('.ar2-map');if(vp&&map){const z=Math.min((vp.clientWidth-16)/mapW,(vp.clientHeight-16)/mapH,1);map.style.transform='translate(-50%,-50%) scale('+Math.max(.25,z)+')';map.style.left='50%';map.style.top='50%'}})}
+ const applyMapScale=(vp,map,zoom)=>{if(!vp||!map)return;const base=Math.max(.25,Math.min((vp.clientWidth-16)/mapW,(vp.clientHeight-16)/mapH,1));map.dataset.baseScale=String(base);map.dataset.userZoom=String(zoom);map.style.left='50%';map.style.top='50%';map.style.transform='translate(-50%,-50%) scale('+(base*zoom)+')'};
+ const fit=()=>{const vp=$('tr')&&$('tr').querySelector('.ar2-map-viewport'),map=vp&&vp.querySelector('.ar2-map');if(!vp||!map)return;applyMapScale(vp,map,Number(map.dataset.userZoom)||1)};
+ if(!window.__ar2ResizeBound){window.__ar2ResizeBound=true;window.addEventListener('resize',()=>{const vp=$('tr')&&$('tr').querySelector('.ar2-map-viewport'),map=vp&&vp.querySelector('.ar2-map');if(vp&&map)applyMapScale(vp,map,Number(map.dataset.userZoom)||1)})}
  requestAnimationFrame(fit);
+ const zoomViewport=$('tr')&&$('tr').querySelector('.ar2-map-viewport');
+ if(zoomViewport){
+  zoomViewport.style.touchAction='none';
+  const activePointers=new Map();let pinchStart=0,zoomStart=1;
+  const distance=()=>{const p=[...activePointers.values()];return p.length<2?0:Math.hypot(p[0].x-p[1].x,p[0].y-p[1].y)};
+  zoomViewport.addEventListener('pointerdown',ev=>{if(ev.pointerType!=='touch')return;activePointers.set(ev.pointerId,{x:ev.clientX,y:ev.clientY});if(activePointers.size===2){pinchStart=distance();zoomStart=Number(zoomViewport.querySelector('.ar2-map')?.dataset.userZoom)||1;for(const id of activePointers.keys()){try{zoomViewport.setPointerCapture(id)}catch(_){}}}});
+  zoomViewport.addEventListener('pointermove',ev=>{if(!activePointers.has(ev.pointerId))return;activePointers.set(ev.pointerId,{x:ev.clientX,y:ev.clientY});if(activePointers.size>=2&&pinchStart>0){ev.preventDefault();const map=zoomViewport.querySelector('.ar2-map');if(!map)return;const zoom=Math.max(.75,Math.min(3.2,zoomStart*distance()/pinchStart));applyMapScale(zoomViewport,map,zoom)}},{passive:false});
+  const endPinch=ev=>{activePointers.delete(ev.pointerId);if(activePointers.size<2)pinchStart=0};
+  zoomViewport.addEventListener('pointerup',endPinch);zoomViewport.addEventListener('pointercancel',endPinch);zoomViewport.addEventListener('lostpointercapture',endPinch);
+ }
  $('tr').querySelectorAll('.ar2-node[data-i]').forEach(e=>e.onclick=()=>{selId=e.dataset.i;window.__ar2SelectedKey=e.dataset.slot;rsp()});
  $('tr').querySelectorAll('.ar2-node[data-future]').forEach(e=>e.onclick=()=>{selId=null;window.__ar2SelectedKey=e.dataset.slot;rsp()});
  $('tr').querySelectorAll('.ar2-passive').forEach(e=>e.onclick=()=>{selId=e.dataset.passive;window.__ar2SelectedKey=null;rsp()});
@@ -2841,4 +2852,39 @@ body{width:100vw!important;height:100vh!important;height:100dvh!important;min-he
 }
 </style>
 
+
+<style id="ar-layout-v4">
+/* Zone de jeu réellement bord à bord : le canvas occupe tout le viewport. */
+html,body{width:100%!important;height:100%!important;min-height:100%!important;margin:0!important;padding:0!important;overflow:hidden!important}
+body{position:fixed!important;inset:0!important;display:block!important;width:100vw!important;height:100vh!important;height:100dvh!important;min-height:100dvh!important}
+canvas#c{position:fixed!important;inset:0!important;display:block!important;width:100vw!important;height:100vh!important;height:100dvh!important;min-height:0!important;flex:none!important;z-index:0!important}
+#chat{position:fixed!important;left:0!important;right:0!important;bottom:0!important;width:100%!important;height:calc(96px + env(safe-area-inset-bottom,0px))!important;box-sizing:border-box!important;padding:6px 12px calc(6px + env(safe-area-inset-bottom,0px))!important;z-index:3!important}
+#hud{z-index:4!important}
+/* L'arbre et sa fiche sont deux colonnes indépendantes. Le pincement ne transforme que la carte. */
+#sp{position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;height:100dvh!important;max-width:none!important;max-height:none!important;margin:0!important;padding:0!important;box-sizing:border-box!important;overflow:hidden!important}
+#sp .card{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;max-width:none!important;max-height:none!important;margin:0!important;padding:calc(8px + env(safe-area-inset-top,0px)) calc(10px + env(safe-area-inset-right,0px)) calc(8px + env(safe-area-inset-bottom,0px)) calc(10px + env(safe-area-inset-left,0px))!important;box-sizing:border-box!important;overflow:hidden!important;border:0!important;border-radius:0!important}
+#sp .top,#sp #tr{position:relative!important;z-index:2!important}
+#sp #tr{display:flex!important;flex:1 1 auto!important;min-height:0!important;overflow:hidden!important}
+#tr .ar2-root{min-width:0!important;min-height:0!important;width:100%!important}
+#tr .ar2-layout{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(230px,290px)!important;gap:10px!important;align-items:stretch!important;min-width:0!important;min-height:0!important;transform:none!important;zoom:1!important}
+#tr .ar2-map-viewport{position:relative!important;min-width:0!important;min-height:0!important;overflow:hidden!important;touch-action:none!important;transform:none!important;zoom:1!important}
+#tr .ar2-map{position:absolute!important;left:50%;top:50%;transform-origin:center center!important;will-change:transform!important}
+#tr .ar2-panel{position:relative!important;z-index:2!important;width:100%!important;min-width:0!important;max-width:290px!important;min-height:0!important;max-height:none!important;flex-shrink:0!important;overflow:auto!important;box-sizing:border-box!important;padding:18px 16px 16px!important;background-color:transparent!important;background-image:url('./assets/panneau-competence.png')!important;background-position:center center!important;background-repeat:no-repeat!important;background-size:100% 100%!important;border:0!important;outline:0!important;border-radius:0!important;box-shadow:none!important;transform:none!important;zoom:1!important;isolation:isolate!important}
+#tr .ar2-panel:before,#tr .ar2-panel:after{content:none!important;display:none!important}
+#tr .ar2-panel>.ar2-points,#tr .ar2-panel>.ar2-detail,#tr .ar2-panel>.ar2-passive-title,#tr .ar2-panel>.ar2-passives,#tr .ar2-panel>.ar2-old-upgrades,#tr .ar2-panel>.ar2-actions{background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important}
+#tr .ar2-panel>.ar2-points{padding:4px 2px!important}
+#tr .ar2-panel>.ar2-detail{padding:8px 2px!important;overflow:visible!important}
+#tr .ar2-panel .ar2-passive{background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important}
+#tr .ar2-panel .ar2-old-upgrades,#tr .ar2-panel .ar2-old-upgrades>*{background:transparent!important;box-shadow:none!important}
+#tr .ar2-panel .ar2-actions button{position:relative!important;z-index:1!important}
+@media(max-width:650px){
+ #tr .ar2-layout{display:flex!important;flex-direction:column!important;gap:6px!important}
+ #tr .ar2-map-viewport{height:min(43vh,340px)!important;min-height:180px!important;flex:0 0 min(43vh,340px)!important}
+ #tr .ar2-panel{width:100%!important;max-width:none!important;min-height:220px!important;max-height:calc(100% - 185px)!important;flex:1 1 auto!important;padding:14px 18px!important}
+}
+@media(max-height:520px) and (min-width:651px){
+ #tr .ar2-layout{grid-template-columns:minmax(0,1fr) 230px!important;gap:8px!important}
+ #tr .ar2-panel{width:230px!important;max-width:230px!important;padding:10px 12px!important}
+}
+</style>
 </body></html>
